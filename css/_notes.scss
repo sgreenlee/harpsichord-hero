@@ -58,7 +58,6 @@
 .note {
   width: 100px;
   height: 100px;
-  bottom: 400px;
 
   line-height:100px;
   vertical-align: middle;
@@ -105,7 +104,7 @@
   }
 }
 
-.note-container {
+#note-container {
   position: absolute;
   z-index: -1;
   bottom: 0%;
