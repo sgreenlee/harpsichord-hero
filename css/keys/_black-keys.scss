@@ -18,7 +18,7 @@
   height: 100%;
   position: absolute;
   transform-style: preserve-3d;
-  transform: rotateX(-30deg);
+  transform: rotateX(-27deg);
 
   figure {
     margin: 0;
@@ -78,7 +78,7 @@
 }
 
 .black-key.pressed {
-  transform: rotateX(-30deg) translateY(15px);
+  transform: rotateX(-27deg) translateY(15px);
 
   .top, .left, .right, .front {
     background-color: red;

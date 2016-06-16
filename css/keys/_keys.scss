@@ -1,19 +1,11 @@
 .keyboard {
   width: 1000px;
   position: absolute;
-  bottom: 50px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   transform-style: preserve-3d;
   perspective: 1000px;
-
-  .underlay {
-    margin: auto;
-    width: 90%;
-    background-color: white;
-    height: 400px;
-    transform: translateY(200px) rotateX(60deg) translateY(-140px);
-  }
 }
 
 @import "white-keys";
