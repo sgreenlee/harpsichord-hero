@@ -5,21 +5,20 @@
   position: absolute;
 }
 
-.f-sharp { left: 160px; }
-.g-sharp { left: 265px; }
-.a-sharp { left: 370px; }
-.c-sharp { left: 580px; }
-.d-sharp { left: 685px; }
-.f-sharp2 { left: 895px; }
-.g-sharp2 { left: 1000px; }
-.a-sharp2 { left: 1105px; }
+.g-sharp { left: 65px; }
+.a-sharp { left: 170px; }
+.c-sharp { left: 370px; }
+.d-sharp { left: 475px; }
+.f-sharp2 { left: 680px; }
+.g-sharp2 { left: 785px; }
+.a-sharp2 { left: 890px; }
 
 .black-key {
   width: 100%;
   height: 100%;
   position: absolute;
   transform-style: preserve-3d;
-  transform: rotateX(-27.5deg);
+  transform: rotateX(-30deg);
 
   figure {
     margin: 0;
@@ -76,4 +75,12 @@
     height: 400px;
     transform: rotateX( -90deg ) translateZ( 25px ) translateY(200px);
    }
+}
+
+.black-key.pressed {
+  transform: rotateX(-30deg) translateY(15px);
+
+  .top, .left, .right, .front {
+    background-color: red;
+  }
 }

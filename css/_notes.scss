@@ -1,0 +1,32 @@
+.note-overlay {
+  position: absolute;
+  z-index: -1;
+  bottom: 0%;
+  height: 14000px;
+  width: 100%;
+  transform: translateY(7000px) rotateX(60deg) translateY(-7400px);
+  background-color: rgba(56, 50, 41, .8);
+
+  .filament {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 0px;
+    border: 1px solid rgb(83, 78, 76);
+  }
+
+  .filament.pressed {
+    border: 1px solid red;
+  }
+
+  .filament.g1 { left: 52px; }
+  .filament.a1 { left: 152px; }
+  .filament.b1 { left: 252px; }
+  .filament.c1 { left: 352px; }
+  .filament.d1 { left: 452px; }
+  .filament.e2 { left: 552px; }
+  .filament.f2 { left: 652px; }
+  .filament.g2 { left: 752px; }
+  .filament.a2 { left: 852px; }
+  .filament.b2 { left: 952px; }
+}

@@ -2,14 +2,25 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <link href='https://fonts.googleapis.com/css?family=Metal+Mania' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/styles.css" media="screen" title="no title" charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <title></title>
   </head>
   <body>
+    <h1 class="metal">Harpsichord Hero</h1>
+    <div id="life-bar">
+      <div class="hp">
+
+      </div>
+    </div>
     <!-- start keyboard -->
     <div class="keyboard">
-      <section class="white-key-container">
-        <div class="white-key">
+      <div class="underlay">
+
+      </div>
+      <section class="white-key-container left">
+        <div class="white-key g1">
           <figure class="front"></figure>
           <figure class="back"></figure>
           <figure class="right"></figure>
@@ -18,8 +29,8 @@
           <figure class="bottom"></figure>
         </div>
       </section>
-      <section class="white-key-container">
-        <div class="white-key">
+      <section class="white-key-container right">
+        <div class="white-key b2">
           <figure class="front"></figure>
           <figure class="back"></figure>
           <figure class="right"></figure>
@@ -28,8 +39,8 @@
           <figure class="bottom"></figure>
         </div>
       </section>
-      <section class="white-key-container">
-        <div class="white-key">
+      <section class="white-key-container left">
+        <div class="white-key a1">
           <figure class="front"></figure>
           <figure class="back"></figure>
           <figure class="right"></figure>
@@ -38,8 +49,8 @@
           <figure class="bottom"></figure>
         </div>
       </section>
-      <section class="white-key-container">
-        <div class="white-key">
+      <section class="white-key-container right">
+        <div class="white-key a2">
           <figure class="front"></figure>
           <figure class="back"></figure>
           <figure class="right"></figure>
@@ -48,8 +59,8 @@
           <figure class="bottom"></figure>
         </div>
       </section>
-      <section class="white-key-container">
-        <div class="white-key">
+      <section class="white-key-container left">
+        <div class="white-key b1">
           <figure class="front"></figure>
           <figure class="back"></figure>
           <figure class="right"></figure>
@@ -58,8 +69,8 @@
           <figure class="bottom"></figure>
         </div>
       </section>
-      <section class="white-key-container">
-        <div class="white-key">
+      <section class="white-key-container right">
+        <div class="white-key g2">
           <figure class="front"></figure>
           <figure class="back"></figure>
           <figure class="right"></figure>
@@ -68,8 +79,8 @@
           <figure class="bottom"></figure>
         </div>
       </section>
-      <section class="white-key-container">
-        <div class="white-key">
+      <section class="white-key-container left">
+        <div class="white-key c1">
           <figure class="front"></figure>
           <figure class="back"></figure>
           <figure class="right"></figure>
@@ -78,8 +89,8 @@
           <figure class="bottom"></figure>
         </div>
       </section>
-      <section class="white-key-container">
-        <div class="white-key">
+      <section class="white-key-container right">
+        <div class="white-key f2 left">
           <figure class="front"></figure>
           <figure class="back"></figure>
           <figure class="right"></figure>
@@ -88,8 +99,8 @@
           <figure class="bottom"></figure>
         </div>
       </section>
-      <section class="white-key-container">
-        <div class="white-key">
+      <section class="white-key-container left">
+        <div class="white-key d1">
           <figure class="front"></figure>
           <figure class="back"></figure>
           <figure class="right"></figure>
@@ -98,8 +109,8 @@
           <figure class="bottom"></figure>
         </div>
       </section>
-      <section class="white-key-container">
-        <div class="white-key">
+      <section class="white-key-container right">
+        <div class="white-key e2 left">
           <figure class="front"></figure>
           <figure class="back"></figure>
           <figure class="right"></figure>
@@ -108,38 +119,9 @@
           <figure class="bottom"></figure>
         </div>
       </section>
-      <section class="white-key-container">
-        <div class="white-key">
-          <figure class="front"></figure>
-          <figure class="back"></figure>
-          <figure class="right"></figure>
-          <figure class="left"></figure>
-          <figure class="top"></figure>
-          <figure class="bottom"></figure>
-        </div>
-      </section>
-      <section class="white-key-container">
-        <div class="white-key">
-          <figure class="front"></figure>
-          <figure class="back"></figure>
-          <figure class="right"></figure>
-          <figure class="left"></figure>
-          <figure class="top"></figure>
-          <figure class="bottom"></figure>
-        </div>
-      </section>
+      <!-- END WHITE KEYS -->
 
       <!-- Start black keys -->
-      <section class="black-key-container">
-        <div class="black-key f-sharp">
-          <figure class="front"></figure>
-          <figure class="back"></figure>
-          <figure class="right"></figure>
-          <figure class="left"></figure>
-          <figure class="top"></figure>
-          <figure class="bottom"></figure>
-        </div>
-      </section>
       <section class="black-key-container">
         <div class="black-key g-sharp">
           <figure class="front"></figure>
@@ -211,7 +193,20 @@
         </div>
       </section>
       <!-- end black keys -->
+      <div class="note-overlay">
+        <div class="filament g1"></div>
+        <div class="filament a1"></div>
+        <div class="filament b1"></div>
+        <div class="filament c1"></div>
+        <div class="filament d1"></div>
+        <div class="filament e2"></div>
+        <div class="filament f2"></div>
+        <div class="filament g2"></div>
+        <div class="filament a2"></div>
+        <div class="filament b2"></div>
+      </div>
     </div>
     <!-- end keyboard -->
+    <script src="js/bundle.js" charset="utf-8"></script>
   </body>
 </html>

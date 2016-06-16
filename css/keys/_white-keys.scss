@@ -2,7 +2,6 @@
   width: 100px;
   height: 50px;
   position: relative;
-  float: left;
 }
 
 .white-key {
@@ -10,17 +9,18 @@
   height: 100%;
   position: absolute;
   transform-style: preserve-3d;
-  transform: rotateX(-27.5deg);
+  transform: rotateX(-30deg);
+  transition: transform 0.2s;
 
   figure {
     margin: 0;
     display: block;
     position: absolute;
+    background: white;
   }
 
   .front  {
     border: 2px solid black;
-    background: white;
     width: 100px;
     height: 50px;
     transform: rotateY(   0deg ) translateZ( 0px );
@@ -51,7 +51,6 @@
   .top    {
     border: 2px solid black;
     z-index: 100;
-    background: white;
     top: -175px;
     width: 100px;
     height: 400px;
@@ -59,10 +58,17 @@
    }
 
   .bottom {
-    z-index: 2;
     bottom: -175px;
     width: 100px;
     height: 400px;
     transform: rotateX( -90deg ) translateZ( 25px ) translateY(200px);
    }
+}
+
+.white-key.pressed {
+  transform: rotateX(-30deg) translateY(15px);
+
+  .top, .front, .left, .right {
+    background-color: red;
+  }
 }

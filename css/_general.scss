@@ -1,3 +1,30 @@
 body {
-  background-color: rgb(201, 191, 184);
+  text-align: center;
+  background-color: rgb(38, 44, 46);
+  background: url(../img/bg.png);
+  background-size: cover;
+}
+
+h1  {
+  font-size: 72px;
+  margin: 50px;
+  text-shadow: 0px 0px 3px #000;
+}
+
+@font-face {
+  font-family: 'metal lord';
+  src: url('../fonts/metal lord.ttf')  format('truetype'); /* Safari, Android, iOS */
+}
+
+.metal {
+  color: $metal-yellow;
+  font-family: 'metal lord', cursive;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
 }
