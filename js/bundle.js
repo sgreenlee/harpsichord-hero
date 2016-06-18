@@ -185,7 +185,6 @@
 	document.addEventListener("keydown", function(e) {
 	  var noteName = KEY_MAPS[e.keyCode];
 	  $("." + noteName).addClass("pressed");
-	  console.log(_notes._head.next.item.y - 400);
 	  playNote(noteName);
 	});
 
