@@ -23,11 +23,17 @@ body {
   line-height: 1; }
 
 body {
+  color: white;
   text-align: center;
   background-color: #262c2e;
   background: url(../img/bg.png);
   background-size: cover;
   font-family: 'OpenSans-Light', sans-serif; }
+
+.clearfix::after {
+  content: "";
+  display: block;
+  clear: both; }
 
 h1 {
   font-size: 72px;
@@ -57,7 +63,7 @@ h1 {
 .keyboard {
   width: 1000px;
   position: absolute;
-  bottom: 20px;
+  bottom: 80px;
   left: 50%;
   transform: translateX(-50%);
   transform-style: preserve-3d;
@@ -436,3 +442,31 @@ h1 {
 
 .modal.load p {
   font-size: 30px; }
+
+footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  z-index: 100;
+  background-color: rgba(9, 7, 5, 0.7); }
+  footer small {
+    padding: 20px;
+    float: left;
+    margin-left: 20px; }
+  footer nav {
+    float: right;
+    margin-right: 20px; }
+    footer nav a {
+      float: left;
+      display: block;
+      padding: 20px;
+      font-size: 16px;
+      color: white;
+      font-weight: bold;
+      text-decoration: none; }
+    footer nav a:visited {
+      color: white; }
+    footer nav a:hover {
+      color: #eee61e; }

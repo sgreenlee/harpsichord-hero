@@ -1,0 +1,38 @@
+footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  z-index: 100;
+  background-color: rgba(9, 7, 5, .7);
+
+  small {
+    padding: 20px;
+    float: left;
+    margin-left: 20px;
+  }
+
+  nav {
+    float: right;
+    margin-right: 20px;
+
+    a {
+      float: left;
+      display: block;
+      padding: 20px;
+      font-size: 16px;
+      color: white;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a:visited {
+      color: white;
+    }
+
+    a:hover {
+      color: $metal-yellow;
+    }
+  }
+}

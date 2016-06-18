@@ -1,9 +1,16 @@
 body {
+  color: white;
   text-align: center;
   background-color: rgb(38, 44, 46);
   background: url(../img/bg.png);
   background-size: cover;
   font-family: 'OpenSans-Light', sans-serif;
+}
+
+.clearfix::after {
+  content: "";
+  display: block;
+  clear: both;
 }
 
 h1  {
