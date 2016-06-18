@@ -104,11 +104,6 @@ document.addEventListener("keyup", function(e) {
   $("." + keyName).removeClass("pressed");
 });
 
-song = new Audio("/assets/mp3/music.mp3");
-song.onload = function () {
-  song.play();
-};
-
 module.exports = {
   start: start,
   stop: stop
