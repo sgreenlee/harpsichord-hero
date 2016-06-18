@@ -68,6 +68,19 @@
   border-radius: 20px;
   position: absolute;
   transform: translateZ(60px) rotateX(-73deg);
+  transition: transform .4s;
+}
+
+.note.scored {
+  box-shadow: 0px 0px 2px 4px rgb(22, 217, 41);
+  background-color: rgb(22, 217, 41);
+  transform: translateZ(60px) rotateX(-73deg) rotateY(90deg) translateY(-500px);
+}
+
+.note.missed {
+  box-shadow: 0px 0px 2px 4px rgb(222, 68, 28);
+  background-color: rgb(222, 68, 28);
+  transform: translateZ(60px) rotateX(-73deg) rotateY(90deg) translateY(100px);
 }
 
 .note::before {
@@ -85,7 +98,6 @@
   border-left: 20px solid transparent;
   border-right: 20px solid transparent;
   border-top: 15px solid black;
-
 }
 
 .finish-zone {

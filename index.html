@@ -2,13 +2,15 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link href='https://fonts.googleapis.com/css?family=Metal+Mania' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/styles.css" media="screen" title="no title" charset="utf-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <title></title>
   </head>
   <body>
     <h1 class="metal">Harpsichord Hero</h1>
+    <audio id="music" src="/assets/mp3/music.mp3">
+
+    </audio>
     <div id="star-meter">
       <div id="star-meter-hp">
 
@@ -212,6 +214,33 @@
       </div>
     </div>
     <!-- end keyboard -->
+
+    <div id="modal-overlay" class="lose modal-group"></div>
+
+    <!-- YOU LOSE MODAL -->
+    <div class="modal lose modal-group">
+      <h2 class="metal">Sorry, you are <em>not</em> a harpsichord hero</h2>
+      <p>Don't quit your day job</p>
+      <button type="button" class="new-game" name="button">Try Again</button>
+    </div>
+    <!-- END YOU LOSE MODAL -->
+
+    <!-- YOU WIN MODAL -->
+    <div class="modal win modal-group">
+      <h2 class="metal">Congratulations, you are a harpsichord hero!</h2>
+      <p>Well done.</p>
+      <button type="button" class="new-game" name="button">Play Again</button>
+    </div>
+    <!-- END YOU WIN MODAL -->
+
+    <!-- LOAD MODAL -->
+    <div class="modal load modal-group">
+      <h2 class="metal">Are you a harpsichord hero?</h2>
+      <p>Play now and find out.</p>
+      <button type="button" class="new-game" name="button">Play</button>
+    </div>
+    <!-- END LOAD MODAL -->
+
     <script src="js/bundle.js" charset="utf-8"></script>
   </body>
 </html>
