@@ -433,3 +433,6 @@ h1 {
     box-shadow: 0px 0px 2px 4px #eee61e;
     color: #eee61e;
     border: 2px solid #eee61e; }
+
+.modal.load p {
+  font-size: 30px; }
