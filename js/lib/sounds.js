@@ -1,9 +1,9 @@
 var _musicEndCallback = function () {};
 
 var Sounds = {
-  music: new Audio("https://raw.githubusercontent.com/sgreenlee/keyboard-hero/assets/mp3/bach-minuet-g-minor.mp3"),
-  boo: new Audio("https://raw.githubusercontent.com/sgreenlee/keyboard-hero/assets/mp3/boo.mp3"),
-  applause: new Audio("https://raw.githubusercontent.com/sgreenlee/keyboard-hero/assets/mp3/applause.mp3"),
+  music: new Audio("https://s3.amazonaws.com/hhero-pro/bach-minuet-g-minor.mp3"),
+  boo: new Audio("https://s3.amazonaws.com/hhero-pro/boo.mp3"),
+  applause: new Audio("https://s3.amazonaws.com/hhero-pro/applause.mp3"),
   setMusicEndCallback: function (callback) {
     _musicEndCallback = callback;
   }
