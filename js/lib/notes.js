@@ -1,4 +1,6 @@
-var KEY_MAPS = require("./keys").KEY_MAPS;
+var maps = require("./keys");
+var KEY_MAPS = maps.KEY_MAPS;
+var KEY_NOTE_MAP = maps.KEY_NOTE_MAP;
 var Note = require("./note.js");
 var LinkedList = require("./linkedList");
 

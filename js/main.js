@@ -1,3 +1,9 @@
+var synth = require("./lib/synth/synth.js");
+
+var maps = require("./lib/keys");
+var KEY_MAPS = maps.KEY_MAPS;
+var KEY_NOTE_MAP = maps.KEY_NOTE_MAP;
+
 window.Game = require("./lib/notes");
 window.StarMeter = require("./lib/starMeter");
 window.Sounds = require("./lib/sounds");
@@ -33,4 +39,11 @@ Modals.setRestartCallback(onRestart);
 
 document.addEventListener("DOMContentLoaded", function () {
   Modals.load.open();
+});
+
+
+document.addEventListener("keydown", function(e) {
+  var noteName = KEY_NOTE_MAP[e.keyCode];
+  synth[noteName].play();
+  playNote(noteName);
 });

@@ -44,6 +44,12 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var synth = __webpack_require__(9);
+
+	var maps = __webpack_require__(4);
+	var KEY_MAPS = maps.KEY_MAPS;
+	var KEY_NOTE_MAP = maps.KEY_NOTE_MAP;
+
 	window.Game = __webpack_require__(2);
 	window.StarMeter = __webpack_require__(7);
 	window.Sounds = __webpack_require__(8);
@@ -82,12 +88,21 @@
 	});
 
 
+	document.addEventListener("keydown", function(e) {
+	  var noteName = KEY_NOTE_MAP[e.keyCode];
+	  synth[noteName].play();
+	  playNote(noteName);
+	});
+
+
 /***/ },
 /* 1 */,
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var KEY_MAPS = __webpack_require__(4).KEY_MAPS;
+	var maps = __webpack_require__(4);
+	var KEY_MAPS = maps.KEY_MAPS;
+	var KEY_NOTE_MAP = maps.KEY_NOTE_MAP;
 	var Note = __webpack_require__(5);
 	var LinkedList = __webpack_require__(6);
 
@@ -310,10 +325,22 @@
 	  186: "b2"
 	};
 
+	var keyNoteMapping = {
+	  65: "G4",
+	  83: "A4",
+	  68: "B4",
+	  70: "C5",
+	  71: "D5",
+	  72: "E5",
+	  74: "F5",
+	  75: "G5",
+	  76: "A5",
+	  186: "B5"
+	};
+
 	var noteNames = ["g1", "a1", "b1", "c1", "d1", "e2", "f2", "g2", "a2", "b2"];
 
-
-	module.exports = { KEY_MAPS: keyMaps, NOTE_NAMES: noteNames };
+	module.exports = { KEY_MAPS: keyMaps, NOTE_NAMES: noteNames, KEY_NOTE_MAP: keyNoteMapping };
 
 
 /***/ },
@@ -466,6 +493,156 @@
 	});
 
 	module.exports = Sounds;
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var FREQUENCIES = __webpack_require__(10);
+	var createNote = __webpack_require__(11);
+
+	var synth = {};
+
+	Object.keys(FREQUENCIES).forEach( function (noteName) {
+	  synth[noteName] = createNote(FREQUENCIES[noteName]);
+	});
+
+	module.exports = synth;
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	var _freqs = {
+	  C: 16.35,
+	  Cs: 17.32,
+	  D: 18.35,
+	  Ds: 19.45,
+	  E: 20.60,
+	  F: 21.83,
+	  Fs: 23.12,
+	  G: 24.50,
+	  Gs: 25.96,
+	  A: 27.50,
+	  As: 29.14,
+	  B: 30.87
+	};
+
+	var _octaves = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+
+	var FREQUENCIES = {};
+
+	_octaves.forEach( function (octave) {
+	  Object.keys(_freqs).forEach( function (note) {
+	    FREQUENCIES[note + octave] = _freqs[note] * Math.pow(2, octave);
+	  });
+	});
+
+	module.exports = FREQUENCIES;
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var pulseWaveOscillator = __webpack_require__(12);
+
+	var AudioContext = window.AudioContext || window.webkitAudioContext;
+	var ctx = new AudioContext();
+
+	function createNote(freq) {
+	  var node1 = pulseWaveOscillator(freq, ctx);
+	  var node2 = pulseWaveOscillator(freq * 2, ctx);
+	  var gain1 = ctx.createGain();
+	  var gain2 = ctx.createGain();
+
+	  node1.connect(gain1);
+	  gain1.connect(ctx.destination);
+
+	  node2.connect(gain2);
+	  gain2.connect(ctx.destination);
+
+	  gain1.gain.value = 0;
+	  gain2.gain.value = 0;
+	  node1.width.value = 0.3;
+	  node2.width.value = 0.3;
+	  node1.start(ctx.currentTime);
+	  node2.start(ctx.currentTime);
+
+	  return {
+	    play: function () {
+	      var now = ctx.currentTime;
+	      gain1.gain.setValueAtTime(1, now + 0.02);
+	      gain2.gain.setValueAtTime(1, now + 0.02);
+	      gain1.gain.linearRampToValueAtTime(0.2 , now + 0.2);
+	      gain2.gain.linearRampToValueAtTime(0.2 , now + 0.2);
+	      gain1.gain.linearRampToValueAtTime(0 , now + 0.3);
+	      gain2.gain.linearRampToValueAtTime(0 , now + 0.3);
+	    },
+
+	    width: function (width) {
+	      node1.width.value = width;
+	      node2.width.value = width;
+	    }
+	  };
+	}
+
+	module.exports = createNote;
+
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	var pulseCurve=new Float32Array(256);
+	for(var i=0;i<128;i++) {
+	  pulseCurve[i]= -1;
+	  pulseCurve[i+128]=1;
+	}
+
+	var constantOneCurve=new Float32Array(2);
+	constantOneCurve[0]=1;
+	constantOneCurve[1]=1;
+
+	pulseWaveOscillator = function(freq, context) {
+	  //Use a normal oscillator as the basis of our new oscillator.
+	  var node = context.createOscillator();
+	  node.type = "sawtooth";
+	  node.frequency.value = freq;
+
+	  //Shape the output into a pulse wave.
+	  var pulseShaper = context.createWaveShaper();
+	  pulseShaper.curve = pulseCurve;
+	  node.connect(pulseShaper);
+
+	  //Use a GainNode as our new "width" audio parameter.
+	  var widthGain = context.createGain();
+	  widthGain.gain.value = 0; //Default width.
+	  node.width = widthGain.gain; //Add parameter to oscillator node.
+	  widthGain.connect(pulseShaper);
+
+	  //Pass a constant value of 1 into the widthGain – so the "width" setting
+	  //is duplicated to its output.
+	  var constantOneShaper = context.createWaveShaper();
+	  constantOneShaper.curve = constantOneCurve;
+	  node.connect(constantOneShaper);
+	  constantOneShaper.connect(widthGain);
+
+	  //Override the oscillator's "connect" and "disconnect" method so that the
+	  //new node's output actually comes from the pulseShaper.
+	  node.connect = function() {
+	    pulseShaper.connect.apply(pulseShaper, arguments);
+	  };
+	  node.disconnect = function() {
+	    pulseShaper.disconnect.apply(pulseShaper, arguments);
+	  };
+
+	  return node;
+	};
+
+	module.exports = pulseWaveOscillator;
 
 
 /***/ }
