@@ -1,5 +1,7 @@
+import json
 import pdb
 import struct
+from midi_notes import GAME_NOTES
 from collections import namedtuple
 
 mh_struct = struct.Struct("!xxxxhhh")
@@ -10,9 +12,69 @@ MidiEvent = namedtuple("MidiEvent", "type channel key velocity")
 SysexEvent = namedtuple("SysexEvent", "data")
 MetaEvent = namedtuple("MetaEvent", "type data")
 
-EVENT_TYPES = {0x8: "NOTE_OFF", 0x9: "NOTE_ON"}
+# Event codes
+
+# Meta Event Codes
+SET_TEMPO_CODE = 0x51
+TIME_SIGNATURE_CODE = 0x58
+KEY_SIGNATURE_CODE = 0x59
+
+MIDI_EVENT_TYPES = {
+    0x8: "NOTE_OFF",
+    0x9: "NOTE_ON"
+}
+
 CONTINUATION_BIT = 1 << 7
 BIT_MASK = ~CONTINUATION_BIT
+
+
+class MidiFile:
+
+    def __init__(self):
+        self.tempo = 0.002
+        self.tracks = []
+
+    def set_header(self, header_chunk):
+        self.format = header_chunk.content.format
+        self.division = header_chunk.content.division
+
+    def add_track(self, track):
+        self.tracks.append(track)
+
+    def save(self, filename):
+        with open(filename, "w") as file:
+            file.write(self.to_json())
+
+    def to_json(self):
+        output = {}
+        output["header"] = {"format": self.format, "division": self.division}
+        output["track"] = self.parse_track()
+        return json.dumps(output)
+
+    def parse_track(self):
+        notes = []
+        current_time = 0
+        time_threshold = 250
+        time_to_last_note = 0
+        events = self.tracks[1].content
+        ms_per_tick = 1.0 / (self.division * self.tempo)
+        for delta_time, event in events:
+            current_time += delta_time
+            if event.type != "NOTE_ON":
+                # ignore all events except NOTE_ON
+                continue
+            else:
+                time_to_last_note += delta_time
+                if time_to_last_note > time_threshold:
+                    note_name = GAME_NOTES.get(event.key)
+                    if note_name:
+                        notes.append({
+                            "time": int(current_time * ms_per_tick),
+                            "note": note_name
+                        })
+                        # reset counter
+                        time_to_last_note = 0
+        return notes
 
 
 class MidiParser:
@@ -23,10 +85,27 @@ class MidiParser:
             self.offset = 0
 
     def parse(self):
-        self.chunks = []
+        mf = MidiFile()
         while self.offset < len(self.midi_file):
-            self.chunks.append(self._readchunk())
-        return self.chunks
+            chunk = self._readchunk()
+            if chunk.type == 'MThd':
+                mf.set_header(chunk)
+            else:
+                mf.add_track(chunk)
+        self.offset = 0
+        return mf
+
+    def __readbyte(self):
+        byte = self.midi_file[self.offset]
+        self.offset += 1
+        return byte
+
+    def __readbytes(self, n):
+        bytes = 0
+        for i in range(n):
+            bytes << 8
+            bytes |= self.__readbyte()
+        return bytes
 
     def _readchunk(self):
         chunktype = self.midi_file[self.offset:(self.offset + 4)].decode("ascii")
@@ -67,29 +146,29 @@ class MidiParser:
             return self.__parse_midi_event()
 
     def __parse_midi_event(self):
-            statusbyte = self.midi_file[self.offset]
-            event_code = statusbyte >> 4
-            channel = statusbyte & 0b1111
+        statusbyte = self.midi_file[self.offset]
+        event_code = statusbyte >> 4
+        channel = statusbyte & 0b1111
+        self.offset += 1
+        if (event_code == 0xC):
+            event_type = "PROGRAM_CHANGE"
+            program = self.midi_file[self.offset]
             self.offset += 1
-            if (event_code == 0xC):
-                event_type = "PROGRAM_CHANGE"
-                program = self.midi_file[self.offset]
-                self.offset += 1
-                return MidiEvent(type=event_type, channel=channel, key=program,
-                                 velocity=None)
-            elif (event_code == 0xD):
-                event_type = "CHANNEL_KEY_PRESSURE"
-                pressure = self.midi_file[self.offset]
-                self.offset += 1
-                return MidiEvent(type=event_type, channel=channel, key=pressure,
-                                 velocity=None)
-            else:
-                event_type = EVENT_TYPES.get(statusbyte >> 4) or statusbyte
-                key = self.midi_file[self.offset]
-                self.offset += 1
-                velocity = self.midi_file[self.offset]
-                self.offset += 1
-                return MidiEvent(type=event_type, channel=channel, key=key,
+            return MidiEvent(type=event_type, channel=channel, key=program,
+                             velocity=None)
+        elif (event_code == 0xD):
+            event_type = "CHANNEL_KEY_PRESSURE"
+            pressure = self.midi_file[self.offset]
+            self.offset += 1
+            return MidiEvent(type=event_type, channel=channel, key=pressure,
+                             velocity=None)
+        else:
+            event_type = MIDI_EVENT_TYPES.get(statusbyte >> 4) or statusbyte
+            key = self.midi_file[self.offset]
+            self.offset += 1
+            velocity = self.midi_file[self.offset]
+            self.offset += 1
+            return MidiEvent(type=event_type, channel=channel, key=key,
                              velocity=velocity)
 
     def __parse_sysex_event(self):
@@ -101,6 +180,38 @@ class MidiParser:
     def __parse_meta_event(self):
         type = self.midi_file[self.offset]
         self.offset += 1
+        if type == TIME_SIGNATURE_CODE:
+            return self.__parse_time_signature()
+        elif type == KEY_SIGNATURE_CODE:
+            return self.__parse_key_signature()
+        elif type == SET_TEMPO_CODE:
+            return self.__parse_set_tempo()
+        else:
+            return self.__parse_meta_default(type)
+
+    def __parse_time_signature(self):
+        length = self.__parse_variable_length_int()
+        nn = self.__readbyte()
+        dd = self.__readbyte()
+        cc = self.__readbyte()
+        bb = self.__readbyte()
+        data = {"numerator": nn, "denominator": 2**dd, "cc": cc,
+                "bb": bb}
+        return MetaEvent(type="SET_TIME_SIGNATURE", data=data)
+
+    def __parse_key_signature(self):
+        length = self.__parse_variable_length_int()
+        sf = self.__readbyte()
+        mi = self.__readbyte()
+        data = {"sf": sf, "minor": mi}
+        return MetaEvent(type="SET_KEY_SIGNATURE", data=data)
+
+    def __parse_set_tempo(self):
+        length = self.__parse_variable_length_int()
+        tempo = self.__readbytes(3)
+        return MetaEvent(type="SET_TEMPO", data={"tempo": tempo})
+
+    def __parse_meta_default(self, type):
         length = self.__parse_variable_length_int()
         data = self.midi_file[self.offset:self.offset + length]
         self.offset += length
