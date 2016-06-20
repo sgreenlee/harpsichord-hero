@@ -44,16 +44,16 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var synth = __webpack_require__(9);
+	var synth = __webpack_require__(1);
 
-	var maps = __webpack_require__(4);
+	var maps = __webpack_require__(5);
 	var KEY_MAPS = maps.KEY_MAPS;
 	var KEY_NOTE_MAP = maps.KEY_NOTE_MAP;
 
-	window.Game = __webpack_require__(2);
-	window.StarMeter = __webpack_require__(7);
-	window.Sounds = __webpack_require__(8);
-	window.Modals = __webpack_require__(3);
+	window.Game = __webpack_require__(6);
+	window.StarMeter = __webpack_require__(9);
+	window.Sounds = __webpack_require__(10);
+	window.Modals = __webpack_require__(11);
 	// require("./lib/midi.js");
 
 	function onWin () {
@@ -88,23 +88,239 @@
 	});
 
 
+	var KEY_PRESSED = {};
+
 	document.addEventListener("keydown", function(e) {
+	  if (KEY_PRESSED[e.keyCode]) return;
+	  KEY_PRESSED[e.keyCode] = true;
 	  var noteName = KEY_NOTE_MAP[e.keyCode];
-	  synth[noteName].play();
-	  playNote(noteName);
+	  if (noteName) synth[noteName].play();
 	});
+	document.addEventListener("keyup", function(e) {
+	  KEY_PRESSED[e.keyCode] = false;
+	  var noteName = KEY_NOTE_MAP[e.keyCode];
+	});
+
+	window.playChord = function () {
+	  synth["G4"].play();
+	  synth["B4"].play();
+	  synth["D5"].play();
+	  synth["G5"].play();
+	  synth["B5"].play();
+	  synth["D6"].play();
+	};
 
 
 /***/ },
-/* 1 */,
-/* 2 */
+/* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var maps = __webpack_require__(4);
+	var FREQUENCIES = __webpack_require__(2);
+	var createNote = __webpack_require__(3);
+
+	var synth = {};
+
+	Object.keys(FREQUENCIES).forEach( function (noteName) {
+	  synth[noteName] = createNote(FREQUENCIES[noteName]);
+	});
+
+	module.exports = synth;
+
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	var _freqs = {
+	  C: 16.35,
+	  Cs: 17.32,
+	  D: 18.35,
+	  Ds: 19.45,
+	  E: 20.60,
+	  F: 21.83,
+	  Fs: 23.12,
+	  G: 24.50,
+	  Gs: 25.96,
+	  A: 27.50,
+	  As: 29.14,
+	  B: 30.87
+	};
+
+	var _octaves = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+
+	var FREQUENCIES = {};
+
+	_octaves.forEach( function (octave) {
+	  Object.keys(_freqs).forEach( function (note) {
+	    FREQUENCIES[note + octave] = _freqs[note] * Math.pow(2, octave);
+	  });
+	});
+
+	module.exports = FREQUENCIES;
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var pulseWaveOscillator = __webpack_require__(4);
+
+	var AudioContext = window.AudioContext || window.webkitAudioContext;
+	var ctx = new AudioContext();
+
+	function createNote(freq) {
+	  var node1 = pulseWaveOscillator(freq, ctx);
+	  var node2 = pulseWaveOscillator(freq * 2, ctx);
+	  var gain1 = ctx.createGain();
+	  var gain2 = ctx.createGain();
+	  var filter1 = ctx.createBiquadFilter();
+	  var filter2 = ctx.createBiquadFilter();
+	  var delay = ctx.createDelay();
+
+	  filter1.type = "highpass";
+	  filter2.type = "highpass";
+	  filter1.frequency.value = 350;
+	  filter2.frequency.value = 350;
+
+	  delay.delayTime.value = 0.05;
+
+	  node1.connect(gain1);
+	  gain1.connect(filter1);
+	  filter1.connect(ctx.destination);
+
+	  node2.connect(gain2);
+	  gain2.connect(filter2);
+	  filter2.connect(delay);
+	  delay.connect(ctx.destination);
+	  filter2.connect(ctx.destination);
+
+	  gain1.gain.value = 0;
+	  gain2.gain.value = 0;
+	  node1.width.value = 0.3;
+	  node2.width.value = 0.3;
+	  node1.start(ctx.currentTime);
+	  node2.start(ctx.currentTime);
+
+	  return {
+	    play: function () {
+	      var now = ctx.currentTime;
+	      gain1.gain.cancelScheduledValues(now);
+	      gain2.gain.cancelScheduledValues(now);
+	      gain1.gain.linearRampToValueAtTime(1, now + 0.02);
+	      gain2.gain.linearRampToValueAtTime(1, now + 0.02);
+	      gain1.gain.linearRampToValueAtTime(0.2 , now + 0.2);
+	      gain2.gain.linearRampToValueAtTime(0.2 , now + 0.2);
+	      gain1.gain.linearRampToValueAtTime(0 , now + 0.3);
+	      gain2.gain.linearRampToValueAtTime(0 , now + 0.3);
+	    },
+
+	    width: function (width) {
+	      node1.width.value = width;
+	      node2.width.value = width;
+	    }
+	  };
+	}
+
+	module.exports = createNote;
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	var pulseCurve=new Float32Array(256);
+	for(var i=0;i<128;i++) {
+	  pulseCurve[i]= -1;
+	  pulseCurve[i+128]=1;
+	}
+
+	var constantOneCurve=new Float32Array(2);
+	constantOneCurve[0]=1;
+	constantOneCurve[1]=1;
+
+	pulseWaveOscillator = function(freq, context) {
+	  //Use a normal oscillator as the basis of our new oscillator.
+	  var node = context.createOscillator();
+	  node.type = "sawtooth";
+	  node.frequency.value = freq;
+
+	  //Shape the output into a pulse wave.
+	  var pulseShaper = context.createWaveShaper();
+	  pulseShaper.curve = pulseCurve;
+	  node.connect(pulseShaper);
+
+	  //Use a GainNode as our new "width" audio parameter.
+	  var widthGain = context.createGain();
+	  widthGain.gain.value = 0; //Default width.
+	  node.width = widthGain.gain; //Add parameter to oscillator node.
+	  widthGain.connect(pulseShaper);
+
+	  //Pass a constant value of 1 into the widthGain – so the "width" setting
+	  //is duplicated to its output.
+	  var constantOneShaper = context.createWaveShaper();
+	  constantOneShaper.curve = constantOneCurve;
+	  node.connect(constantOneShaper);
+	  constantOneShaper.connect(widthGain);
+
+	  //Override the oscillator's "connect" and "disconnect" method so that the
+	  //new node's output actually comes from the pulseShaper.
+	  node.connect = function() {
+	    pulseShaper.connect.apply(pulseShaper, arguments);
+	  };
+	  node.disconnect = function() {
+	    pulseShaper.disconnect.apply(pulseShaper, arguments);
+	  };
+
+	  return node;
+	};
+
+	module.exports = pulseWaveOscillator;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	var keyMaps = {
+	  65: "g1",
+	  83: "a1",
+	  68: "b1",
+	  70: "c1",
+	  71: "d1",
+	  72: "e2",
+	  74: "f2",
+	  75: "g2",
+	  76: "a2",
+	  186: "b2"
+	};
+
+	var keyNoteMapping = {
+	  65: "G4",
+	  83: "A4",
+	  68: "B4",
+	  70: "C5",
+	  71: "D5",
+	  72: "E5",
+	  74: "F5",
+	  75: "G5",
+	  76: "A5",
+	  186: "B5"
+	};
+
+	var noteNames = ["g1", "a1", "b1", "c1", "d1", "e2", "f2", "g2", "a2", "b2"];
+
+	module.exports = { KEY_MAPS: keyMaps, NOTE_NAMES: noteNames, KEY_NOTE_MAP: keyNoteMapping };
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var maps = __webpack_require__(5);
 	var KEY_MAPS = maps.KEY_MAPS;
 	var KEY_NOTE_MAP = maps.KEY_NOTE_MAP;
-	var Note = __webpack_require__(5);
-	var LinkedList = __webpack_require__(6);
+	var Note = __webpack_require__(7);
+	var LinkedList = __webpack_require__(8);
 
 	var DISTANCE_TO_TRAVEL = 13000;
 	var SECONDS_TO_TRAVEL = 11;
@@ -215,7 +431,159 @@
 
 
 /***/ },
-/* 3 */
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var NOTE_NAMES = __webpack_require__(5).NOTE_NAMES;
+	var NUM_NOTES = NOTE_NAMES.length;
+
+	function Note (noteName) {
+	  this.name = noteName;
+	  this.element = $("<div>").addClass("note").addClass(noteName);
+	  this.y = 13400;
+	}
+
+	Note.random = function () {
+	  var noteName = NOTE_NAMES[Math.floor(Math.random() * NUM_NOTES)];
+	  return new Note(noteName);
+	};
+
+	module.exports = Note;
+
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	function Node (item, prev, next) {
+	  this.item = item;
+	  this.prev = prev || null;
+	  this.next = next || null;
+	}
+
+	Node.prototype.delete = function () {
+	  this.prev.next = this.next;
+	  this.next.prev = this.prev;
+	};
+
+	function LinkedList () {
+	  this._head = new Node(null);
+	  this._tail = new Node(null);
+	  this._tail.prev = this._head;
+	  this._head.next = this._tail;
+	}
+
+	LinkedList.prototype.add = function (item) {
+	  var node = new Node(item);
+	  node.prev = this._tail.prev;
+	  node.next = this._tail;
+	  this._tail.prev.next = node;
+	  this._tail.prev = node;
+	};
+
+	LinkedList.prototype.forEach = function(callback) {
+	  var argsArray = [].slice.call(arguments, 1);
+	  var currentNode = this._head.next;
+	  while (currentNode.next !== null) {
+	    callback.apply(null, [currentNode].concat(argsArray));
+	    currentNode = currentNode.next;
+	  }
+	};
+
+	LinkedList.prototype.while = function (truthyFunc, callback) {
+	  var argsArray = [].slice.call(arguments, 2);
+	  var currentNode = this._head.next;
+	  while (currentNode.next !== null && truthyFunc(currentNode)) {
+	    callback.apply(null, [currentNode].concat(argsArray));
+	    currentNode = currentNode.next;
+	  }
+	};
+
+	module.exports = LinkedList;
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	var $starMeter = $('#star-meter');
+	var $starMeterHP = $('#star-meter-hp');
+
+	var _hp = 60;
+	var _loseCallback = function () {};
+
+	function _calculateMeterColor () {
+	  var green = Math.floor((217 - 22) * (_hp / 100) + 22);
+	  var red = Math.floor(239 - green);
+	  return "rgb(" + red +", " + green + ", 41)";
+	}
+
+	function updateMeter () {
+	  $starMeterHP.css("height", _hp + "%");
+	  $starMeterHP.css("background-color", _calculateMeterColor());
+	}
+
+	var starMeter = {
+	  reset: function () {
+	    _hp = 60;
+	    updateMeter();
+	  },
+
+	  bonus: function (timeDelta) {
+	    var score = (100 - Math.abs(timeDelta)) / 10;
+	    _hp += score;
+	    if (_hp > 100) {
+	      _hp = 100;
+	    }
+	    updateMeter();
+	  },
+
+	  malus: function (score) {
+	    _hp -= score;
+	    updateMeter();
+	    if (this.isLost()) {
+	      _loseCallback();
+	    }
+	  },
+
+	  isLost: function () {
+	    return _hp < 20;
+	  },
+
+	  setLoseCallback: function (callback) {
+	    _loseCallback = callback;
+	  }
+	};
+
+	updateMeter();
+
+	module.exports = starMeter;
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	var _musicEndCallback = function () {};
+
+	var Sounds = {
+	  music: new Audio("https://s3.amazonaws.com/hhero-pro/bach-minuet-g-minor.mp3"),
+	  boo: new Audio("https://s3.amazonaws.com/hhero-pro/boo.mp3"),
+	  applause: new Audio("https://s3.amazonaws.com/hhero-pro/applause.mp3"),
+	  setMusicEndCallback: function (callback) {
+	    _musicEndCallback = callback;
+	  }
+	};
+
+	Sounds.music.addEventListener("ended", function () {
+	  _musicEndCallback();
+	});
+
+	module.exports = Sounds;
+
+
+/***/ },
+/* 11 */
 /***/ function(module, exports) {
 
 	var $modalOverlay = $("#modal-overlay");
@@ -306,343 +674,6 @@
 	    currentModal.close();
 	  }
 	};
-
-
-/***/ },
-/* 4 */
-/***/ function(module, exports) {
-
-	var keyMaps = {
-	  65: "g1",
-	  83: "a1",
-	  68: "b1",
-	  70: "c1",
-	  71: "d1",
-	  72: "e2",
-	  74: "f2",
-	  75: "g2",
-	  76: "a2",
-	  186: "b2"
-	};
-
-	var keyNoteMapping = {
-	  65: "G4",
-	  83: "A4",
-	  68: "B4",
-	  70: "C5",
-	  71: "D5",
-	  72: "E5",
-	  74: "F5",
-	  75: "G5",
-	  76: "A5",
-	  186: "B5"
-	};
-
-	var noteNames = ["g1", "a1", "b1", "c1", "d1", "e2", "f2", "g2", "a2", "b2"];
-
-	module.exports = { KEY_MAPS: keyMaps, NOTE_NAMES: noteNames, KEY_NOTE_MAP: keyNoteMapping };
-
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var NOTE_NAMES = __webpack_require__(4).NOTE_NAMES;
-	var NUM_NOTES = NOTE_NAMES.length;
-
-	function Note (noteName) {
-	  this.name = noteName;
-	  this.element = $("<div>").addClass("note").addClass(noteName);
-	  this.y = 13400;
-	}
-
-	Note.random = function () {
-	  var noteName = NOTE_NAMES[Math.floor(Math.random() * NUM_NOTES)];
-	  return new Note(noteName);
-	};
-
-	module.exports = Note;
-
-
-/***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	function Node (item, prev, next) {
-	  this.item = item;
-	  this.prev = prev || null;
-	  this.next = next || null;
-	}
-
-	Node.prototype.delete = function () {
-	  this.prev.next = this.next;
-	  this.next.prev = this.prev;
-	};
-
-	function LinkedList () {
-	  this._head = new Node(null);
-	  this._tail = new Node(null);
-	  this._tail.prev = this._head;
-	  this._head.next = this._tail;
-	}
-
-	LinkedList.prototype.add = function (item) {
-	  var node = new Node(item);
-	  node.prev = this._tail.prev;
-	  node.next = this._tail;
-	  this._tail.prev.next = node;
-	  this._tail.prev = node;
-	};
-
-	LinkedList.prototype.forEach = function(callback) {
-	  var argsArray = [].slice.call(arguments, 1);
-	  var currentNode = this._head.next;
-	  while (currentNode.next !== null) {
-	    callback.apply(null, [currentNode].concat(argsArray));
-	    currentNode = currentNode.next;
-	  }
-	};
-
-	LinkedList.prototype.while = function (truthyFunc, callback) {
-	  var argsArray = [].slice.call(arguments, 2);
-	  var currentNode = this._head.next;
-	  while (currentNode.next !== null && truthyFunc(currentNode)) {
-	    callback.apply(null, [currentNode].concat(argsArray));
-	    currentNode = currentNode.next;
-	  }
-	};
-
-	module.exports = LinkedList;
-
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	var $starMeter = $('#star-meter');
-	var $starMeterHP = $('#star-meter-hp');
-
-	var _hp = 60;
-	var _loseCallback = function () {};
-
-	function _calculateMeterColor () {
-	  var green = Math.floor((217 - 22) * (_hp / 100) + 22);
-	  var red = Math.floor(239 - green);
-	  return "rgb(" + red +", " + green + ", 41)";
-	}
-
-	function updateMeter () {
-	  $starMeterHP.css("height", _hp + "%");
-	  $starMeterHP.css("background-color", _calculateMeterColor());
-	}
-
-	var starMeter = {
-	  reset: function () {
-	    _hp = 60;
-	    updateMeter();
-	  },
-
-	  bonus: function (timeDelta) {
-	    var score = (100 - Math.abs(timeDelta)) / 10;
-	    _hp += score;
-	    if (_hp > 100) {
-	      _hp = 100;
-	    }
-	    updateMeter();
-	  },
-
-	  malus: function (score) {
-	    _hp -= score;
-	    updateMeter();
-	    if (this.isLost()) {
-	      _loseCallback();
-	    }
-	  },
-
-	  isLost: function () {
-	    return _hp < 20;
-	  },
-
-	  setLoseCallback: function (callback) {
-	    _loseCallback = callback;
-	  }
-	};
-
-	updateMeter();
-
-	module.exports = starMeter;
-
-
-/***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	var _musicEndCallback = function () {};
-
-	var Sounds = {
-	  music: new Audio("https://s3.amazonaws.com/hhero-pro/bach-minuet-g-minor.mp3"),
-	  boo: new Audio("https://s3.amazonaws.com/hhero-pro/boo.mp3"),
-	  applause: new Audio("https://s3.amazonaws.com/hhero-pro/applause.mp3"),
-	  setMusicEndCallback: function (callback) {
-	    _musicEndCallback = callback;
-	  }
-	};
-
-	Sounds.music.addEventListener("ended", function () {
-	  _musicEndCallback();
-	});
-
-	module.exports = Sounds;
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var FREQUENCIES = __webpack_require__(10);
-	var createNote = __webpack_require__(11);
-
-	var synth = {};
-
-	Object.keys(FREQUENCIES).forEach( function (noteName) {
-	  synth[noteName] = createNote(FREQUENCIES[noteName]);
-	});
-
-	module.exports = synth;
-
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	var _freqs = {
-	  C: 16.35,
-	  Cs: 17.32,
-	  D: 18.35,
-	  Ds: 19.45,
-	  E: 20.60,
-	  F: 21.83,
-	  Fs: 23.12,
-	  G: 24.50,
-	  Gs: 25.96,
-	  A: 27.50,
-	  As: 29.14,
-	  B: 30.87
-	};
-
-	var _octaves = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-
-	var FREQUENCIES = {};
-
-	_octaves.forEach( function (octave) {
-	  Object.keys(_freqs).forEach( function (note) {
-	    FREQUENCIES[note + octave] = _freqs[note] * Math.pow(2, octave);
-	  });
-	});
-
-	module.exports = FREQUENCIES;
-
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var pulseWaveOscillator = __webpack_require__(12);
-
-	var AudioContext = window.AudioContext || window.webkitAudioContext;
-	var ctx = new AudioContext();
-
-	function createNote(freq) {
-	  var node1 = pulseWaveOscillator(freq, ctx);
-	  var node2 = pulseWaveOscillator(freq * 2, ctx);
-	  var gain1 = ctx.createGain();
-	  var gain2 = ctx.createGain();
-
-	  node1.connect(gain1);
-	  gain1.connect(ctx.destination);
-
-	  node2.connect(gain2);
-	  gain2.connect(ctx.destination);
-
-	  gain1.gain.value = 0;
-	  gain2.gain.value = 0;
-	  node1.width.value = 0.3;
-	  node2.width.value = 0.3;
-	  node1.start(ctx.currentTime);
-	  node2.start(ctx.currentTime);
-
-	  return {
-	    play: function () {
-	      var now = ctx.currentTime;
-	      gain1.gain.setValueAtTime(1, now + 0.02);
-	      gain2.gain.setValueAtTime(1, now + 0.02);
-	      gain1.gain.linearRampToValueAtTime(0.2 , now + 0.2);
-	      gain2.gain.linearRampToValueAtTime(0.2 , now + 0.2);
-	      gain1.gain.linearRampToValueAtTime(0 , now + 0.3);
-	      gain2.gain.linearRampToValueAtTime(0 , now + 0.3);
-	    },
-
-	    width: function (width) {
-	      node1.width.value = width;
-	      node2.width.value = width;
-	    }
-	  };
-	}
-
-	module.exports = createNote;
-
-
-/***/ },
-/* 12 */
-/***/ function(module, exports) {
-
-	var pulseCurve=new Float32Array(256);
-	for(var i=0;i<128;i++) {
-	  pulseCurve[i]= -1;
-	  pulseCurve[i+128]=1;
-	}
-
-	var constantOneCurve=new Float32Array(2);
-	constantOneCurve[0]=1;
-	constantOneCurve[1]=1;
-
-	pulseWaveOscillator = function(freq, context) {
-	  //Use a normal oscillator as the basis of our new oscillator.
-	  var node = context.createOscillator();
-	  node.type = "sawtooth";
-	  node.frequency.value = freq;
-
-	  //Shape the output into a pulse wave.
-	  var pulseShaper = context.createWaveShaper();
-	  pulseShaper.curve = pulseCurve;
-	  node.connect(pulseShaper);
-
-	  //Use a GainNode as our new "width" audio parameter.
-	  var widthGain = context.createGain();
-	  widthGain.gain.value = 0; //Default width.
-	  node.width = widthGain.gain; //Add parameter to oscillator node.
-	  widthGain.connect(pulseShaper);
-
-	  //Pass a constant value of 1 into the widthGain – so the "width" setting
-	  //is duplicated to its output.
-	  var constantOneShaper = context.createWaveShaper();
-	  constantOneShaper.curve = constantOneCurve;
-	  node.connect(constantOneShaper);
-	  constantOneShaper.connect(widthGain);
-
-	  //Override the oscillator's "connect" and "disconnect" method so that the
-	  //new node's output actually comes from the pulseShaper.
-	  node.connect = function() {
-	    pulseShaper.connect.apply(pulseShaper, arguments);
-	  };
-	  node.disconnect = function() {
-	    pulseShaper.disconnect.apply(pulseShaper, arguments);
-	  };
-
-	  return node;
-	};
-
-	module.exports = pulseWaveOscillator;
 
 
 /***/ }

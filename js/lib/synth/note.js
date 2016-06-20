@@ -45,8 +45,8 @@ function createNote(freq) {
       gain2.gain.linearRampToValueAtTime(1, now + 0.02);
       gain1.gain.linearRampToValueAtTime(0.2 , now + 0.2);
       gain2.gain.linearRampToValueAtTime(0.2 , now + 0.2);
-      gain1.gain.linearRampToValueAtTime(0 , now + 0.5);
-      gain2.gain.linearRampToValueAtTime(0 , now + 0.5);
+      gain1.gain.linearRampToValueAtTime(0 , now + 0.3);
+      gain2.gain.linearRampToValueAtTime(0 , now + 0.3);
     },
 
     width: function (width) {

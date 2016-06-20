@@ -12,10 +12,10 @@ Harpsichord Hero is mostly implemented in vanilla JavaScript, HTML and CSS3. It 
 
 ## Implementation Details
 
-
+The 3D UI elements are rendered with CSS transformations. Currently notes are generated randomly on a fixed interval. When notes are created, they are added onto a linked-list with a countdown variable and a DOM Node representing the note is inserted into the page. With every animation cycle every note in the linked-list has its countdown decreased and the DOM is updated. When the countdown value for a noted reaches a certain point the player can play the note by hitting the corresponding key on the keyboard. When the player hits a key, an event-listener searches the linked-list for a playable note, removing it if from the DOM and the list if it finds one. If a note reaches the end of the without being played its removed from the linked-list and the DOM and the player's score decreases.
 
 ## To-do's
 
-* implement a Harpsichord synthesizer with the Web Audio API
+* reimplement part of UI in canvas to improve performance
 * parse MIDI files to create more realistic gameplay
 * rewrite the app in 100% vanilla JavaScript
