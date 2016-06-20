@@ -44,10 +44,10 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	window.Game = __webpack_require__(2);
-	window.StarMeter = __webpack_require__(7);
-	window.Sounds = __webpack_require__(8);
-	window.Modals = __webpack_require__(3);
+	window.Game = __webpack_require__(6);
+	window.StarMeter = __webpack_require__(9);
+	window.Sounds = __webpack_require__(10);
+	window.Modals = __webpack_require__(11);
 	// require("./lib/midi.js");
 
 	function onWin () {
@@ -84,12 +84,38 @@
 
 /***/ },
 /* 1 */,
-/* 2 */
+/* 2 */,
+/* 3 */,
+/* 4 */,
+/* 5 */
+/***/ function(module, exports) {
+
+	var keyMaps = {
+	  65: "g1",
+	  83: "a1",
+	  68: "b1",
+	  70: "c1",
+	  71: "d1",
+	  72: "e2",
+	  74: "f2",
+	  75: "g2",
+	  76: "a2",
+	  186: "b2"
+	};
+
+	var noteNames = ["g1", "a1", "b1", "c1", "d1", "e2", "f2", "g2", "a2", "b2"];
+
+
+	module.exports = { KEY_MAPS: keyMaps, NOTE_NAMES: noteNames };
+
+
+/***/ },
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var KEY_MAPS = __webpack_require__(4).KEY_MAPS;
-	var Note = __webpack_require__(5);
-	var LinkedList = __webpack_require__(6);
+	var KEY_MAPS = __webpack_require__(5).KEY_MAPS;
+	var Note = __webpack_require__(7);
+	var LinkedList = __webpack_require__(8);
 
 	var DISTANCE_TO_TRAVEL = 13000;
 	var SECONDS_TO_TRAVEL = 11;
@@ -200,7 +226,159 @@
 
 
 /***/ },
-/* 3 */
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var NOTE_NAMES = __webpack_require__(5).NOTE_NAMES;
+	var NUM_NOTES = NOTE_NAMES.length;
+
+	function Note (noteName) {
+	  this.name = noteName;
+	  this.element = $("<div>").addClass("note").addClass(noteName);
+	  this.y = 13400;
+	}
+
+	Note.random = function () {
+	  var noteName = NOTE_NAMES[Math.floor(Math.random() * NUM_NOTES)];
+	  return new Note(noteName);
+	};
+
+	module.exports = Note;
+
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	function Node (item, prev, next) {
+	  this.item = item;
+	  this.prev = prev || null;
+	  this.next = next || null;
+	}
+
+	Node.prototype.delete = function () {
+	  this.prev.next = this.next;
+	  this.next.prev = this.prev;
+	};
+
+	function LinkedList () {
+	  this._head = new Node(null);
+	  this._tail = new Node(null);
+	  this._tail.prev = this._head;
+	  this._head.next = this._tail;
+	}
+
+	LinkedList.prototype.add = function (item) {
+	  var node = new Node(item);
+	  node.prev = this._tail.prev;
+	  node.next = this._tail;
+	  this._tail.prev.next = node;
+	  this._tail.prev = node;
+	};
+
+	LinkedList.prototype.forEach = function(callback) {
+	  var argsArray = [].slice.call(arguments, 1);
+	  var currentNode = this._head.next;
+	  while (currentNode.next !== null) {
+	    callback.apply(null, [currentNode].concat(argsArray));
+	    currentNode = currentNode.next;
+	  }
+	};
+
+	LinkedList.prototype.while = function (truthyFunc, callback) {
+	  var argsArray = [].slice.call(arguments, 2);
+	  var currentNode = this._head.next;
+	  while (currentNode.next !== null && truthyFunc(currentNode)) {
+	    callback.apply(null, [currentNode].concat(argsArray));
+	    currentNode = currentNode.next;
+	  }
+	};
+
+	module.exports = LinkedList;
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	var $starMeter = $('#star-meter');
+	var $starMeterHP = $('#star-meter-hp');
+
+	var _hp = 60;
+	var _loseCallback = function () {};
+
+	function _calculateMeterColor () {
+	  var green = Math.floor((217 - 22) * (_hp / 100) + 22);
+	  var red = Math.floor(239 - green);
+	  return "rgb(" + red +", " + green + ", 41)";
+	}
+
+	function updateMeter () {
+	  $starMeterHP.css("height", _hp + "%");
+	  $starMeterHP.css("background-color", _calculateMeterColor());
+	}
+
+	var starMeter = {
+	  reset: function () {
+	    _hp = 60;
+	    updateMeter();
+	  },
+
+	  bonus: function (timeDelta) {
+	    var score = (100 - Math.abs(timeDelta)) / 10;
+	    _hp += score;
+	    if (_hp > 100) {
+	      _hp = 100;
+	    }
+	    updateMeter();
+	  },
+
+	  malus: function (score) {
+	    _hp -= score;
+	    updateMeter();
+	    if (this.isLost()) {
+	      _loseCallback();
+	    }
+	  },
+
+	  isLost: function () {
+	    return _hp < 20;
+	  },
+
+	  setLoseCallback: function (callback) {
+	    _loseCallback = callback;
+	  }
+	};
+
+	updateMeter();
+
+	module.exports = starMeter;
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	var _musicEndCallback = function () {};
+
+	var Sounds = {
+	  music: new Audio("https://s3.amazonaws.com/hhero-pro/bach-minuet-g-minor.mp3"),
+	  boo: new Audio("https://s3.amazonaws.com/hhero-pro/boo.mp3"),
+	  applause: new Audio("https://s3.amazonaws.com/hhero-pro/applause.mp3"),
+	  setMusicEndCallback: function (callback) {
+	    _musicEndCallback = callback;
+	  }
+	};
+
+	Sounds.music.addEventListener("ended", function () {
+	  _musicEndCallback();
+	});
+
+	module.exports = Sounds;
+
+
+/***/ },
+/* 11 */
 /***/ function(module, exports) {
 
 	var $modalOverlay = $("#modal-overlay");
@@ -291,181 +469,6 @@
 	    currentModal.close();
 	  }
 	};
-
-
-/***/ },
-/* 4 */
-/***/ function(module, exports) {
-
-	var keyMaps = {
-	  65: "g1",
-	  83: "a1",
-	  68: "b1",
-	  70: "c1",
-	  71: "d1",
-	  72: "e2",
-	  74: "f2",
-	  75: "g2",
-	  76: "a2",
-	  186: "b2"
-	};
-
-	var noteNames = ["g1", "a1", "b1", "c1", "d1", "e2", "f2", "g2", "a2", "b2"];
-
-
-	module.exports = { KEY_MAPS: keyMaps, NOTE_NAMES: noteNames };
-
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var NOTE_NAMES = __webpack_require__(4).NOTE_NAMES;
-	var NUM_NOTES = NOTE_NAMES.length;
-
-	function Note (noteName) {
-	  this.name = noteName;
-	  this.element = $("<div>").addClass("note").addClass(noteName);
-	  this.y = 13400;
-	}
-
-	Note.random = function () {
-	  var noteName = NOTE_NAMES[Math.floor(Math.random() * NUM_NOTES)];
-	  return new Note(noteName);
-	};
-
-	module.exports = Note;
-
-
-/***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	function Node (item, prev, next) {
-	  this.item = item;
-	  this.prev = prev || null;
-	  this.next = next || null;
-	}
-
-	Node.prototype.delete = function () {
-	  this.prev.next = this.next;
-	  this.next.prev = this.prev;
-	};
-
-	function LinkedList () {
-	  this._head = new Node(null);
-	  this._tail = new Node(null);
-	  this._tail.prev = this._head;
-	  this._head.next = this._tail;
-	}
-
-	LinkedList.prototype.add = function (item) {
-	  var node = new Node(item);
-	  node.prev = this._tail.prev;
-	  node.next = this._tail;
-	  this._tail.prev.next = node;
-	  this._tail.prev = node;
-	};
-
-	LinkedList.prototype.forEach = function(callback) {
-	  var argsArray = [].slice.call(arguments, 1);
-	  var currentNode = this._head.next;
-	  while (currentNode.next !== null) {
-	    callback.apply(null, [currentNode].concat(argsArray));
-	    currentNode = currentNode.next;
-	  }
-	};
-
-	LinkedList.prototype.while = function (truthyFunc, callback) {
-	  var argsArray = [].slice.call(arguments, 2);
-	  var currentNode = this._head.next;
-	  while (currentNode.next !== null && truthyFunc(currentNode)) {
-	    callback.apply(null, [currentNode].concat(argsArray));
-	    currentNode = currentNode.next;
-	  }
-	};
-
-	module.exports = LinkedList;
-
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	var $starMeter = $('#star-meter');
-	var $starMeterHP = $('#star-meter-hp');
-
-	var _hp = 60;
-	var _loseCallback = function () {};
-
-	function _calculateMeterColor () {
-	  var green = Math.floor((217 - 22) * (_hp / 100) + 22);
-	  var red = Math.floor(239 - green);
-	  return "rgb(" + red +", " + green + ", 41)";
-	}
-
-	function updateMeter () {
-	  $starMeterHP.css("height", _hp + "%");
-	  $starMeterHP.css("background-color", _calculateMeterColor());
-	}
-
-	var starMeter = {
-	  reset: function () {
-	    _hp = 60;
-	    updateMeter();
-	  },
-
-	  bonus: function (timeDelta) {
-	    var score = (100 - Math.abs(timeDelta)) / 10;
-	    _hp += score;
-	    if (_hp > 100) {
-	      _hp = 100;
-	    }
-	    updateMeter();
-	  },
-
-	  malus: function (score) {
-	    _hp -= score;
-	    updateMeter();
-	    if (this.isLost()) {
-	      _loseCallback();
-	    }
-	  },
-
-	  isLost: function () {
-	    return _hp < 20;
-	  },
-
-	  setLoseCallback: function (callback) {
-	    _loseCallback = callback;
-	  }
-	};
-
-	updateMeter();
-
-	module.exports = starMeter;
-
-
-/***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	var _musicEndCallback = function () {};
-
-	var Sounds = {
-	  music: new Audio("https://s3.amazonaws.com/hhero-pro/bach-minuet-g-minor.mp3"),
-	  boo: new Audio("https://s3.amazonaws.com/hhero-pro/boo.mp3"),
-	  applause: new Audio("https://s3.amazonaws.com/hhero-pro/applause.mp3"),
-	  setMusicEndCallback: function (callback) {
-	    _musicEndCallback = callback;
-	  }
-	};
-
-	Sounds.music.addEventListener("ended", function () {
-	  _musicEndCallback();
-	});
-
-	module.exports = Sounds;
 
 
 /***/ }
