@@ -42,8 +42,24 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+var KEY_PRESSED = {};
+
 document.addEventListener("keydown", function(e) {
+  if (KEY_PRESSED[e.keyCode]) return;
+  KEY_PRESSED[e.keyCode] = true;
   var noteName = KEY_NOTE_MAP[e.keyCode];
-  synth[noteName].play();
-  playNote(noteName);
+  if (noteName) synth[noteName].play();
 });
+document.addEventListener("keyup", function(e) {
+  KEY_PRESSED[e.keyCode] = false;
+  var noteName = KEY_NOTE_MAP[e.keyCode];
+});
+
+window.playChord = function () {
+  synth["G4"].play();
+  synth["B4"].play();
+  synth["D5"].play();
+  synth["G5"].play();
+  synth["B5"].play();
+  synth["D6"].play();
+};
