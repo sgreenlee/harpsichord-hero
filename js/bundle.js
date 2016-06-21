@@ -176,7 +176,7 @@
 	function getSongNotes() {
 	  $.ajax({
 	    type: "GET",
-	    url: "/assets/json/bach_minuet_g_major.json",
+	    url: "assets/json/bach_minuet_g_major.json",
 	    dataType: "json",
 	    success: function (data) {
 	      loadNotes(data.track);
