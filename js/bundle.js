@@ -65,7 +65,7 @@
 	function onLose () {
 	  Game.stop();
 	  Sounds.music.pause();
-	  Sounds.music.current_time = 0;
+	  Sounds.music.currentTime = 0;
 	  Sounds.boo.play();
 	  Modals.lose.open();
 	}
