@@ -223,94 +223,94 @@ h1 {
   .note-overlay .filament.pressed {
     border: 1px solid red; }
 
-.filament.g1 {
+.filament.G1 {
   left: 52px; }
 
-.filament.a1 {
+.filament.A1 {
   left: 152px; }
 
-.filament.b1 {
+.filament.B1 {
   left: 252px; }
 
-.filament.c1 {
+.filament.C1 {
   left: 352px; }
 
-.filament.d1 {
+.filament.D1 {
   left: 452px; }
 
-.filament.e2 {
+.filament.E1 {
   left: 552px; }
 
-.filament.f2 {
+.filament.F1 {
   left: 652px; }
 
-.filament.g2 {
+.filament.G2 {
   left: 752px; }
 
-.filament.a2 {
+.filament.A2 {
   left: 852px; }
 
-.filament.b2 {
+.filament.B2 {
   left: 952px; }
 
-.note.g1 {
+.note.G1 {
   left: 2px; }
 
-.note.a1 {
+.note.A1 {
   left: 102px; }
 
-.note.b1 {
+.note.B1 {
   left: 202px; }
 
-.note.c1 {
+.note.C1 {
   left: 302px; }
 
-.note.d1 {
+.note.D1 {
   left: 402px; }
 
-.note.e2 {
+.note.E1 {
   left: 502px; }
 
-.note.f2 {
+.note.F1 {
   left: 602px; }
 
-.note.g2 {
+.note.G2 {
   left: 702px; }
 
-.note.a2 {
+.note.A2 {
   left: 802px; }
 
-.note.b2 {
+.note.B2 {
   left: 902px; }
 
-.note.g1::after {
+.note.G1::after {
   content: "A"; }
 
-.note.a1::after {
+.note.A1::after {
   content: "S"; }
 
-.note.b1::after {
+.note.B1::after {
   content: "D"; }
 
-.note.c1::after {
+.note.C1::after {
   content: "F"; }
 
-.note.d1::after {
+.note.D1::after {
   content: "G"; }
 
-.note.e2::after {
+.note.E1::after {
   content: "H"; }
 
-.note.f2::after {
+.note.F1::after {
   content: "J"; }
 
-.note.g2::after {
+.note.G2::after {
   content: "K"; }
 
-.note.a2::after {
+.note.A2::after {
   content: "L"; }
 
-.note.b2::after {
+.note.B2::after {
   content: ";"; }
 
 .note {
