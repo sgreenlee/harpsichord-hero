@@ -53,27 +53,27 @@ class MidiFile:
 
     def parse_track(self):
         notes = []
-        current_time = 0
+        current_time = self.division * 3 # add 1 bar delay
         time_threshold = 250
-        time_to_last_note = 0
+        counts = {"LEFT": time_threshold + 1, "RIGHT": time_threshold + 1}
         events = self.tracks[1].content
         ms_per_tick = 1.0 / (self.division * self.tempo)
         for delta_time, event in events:
             current_time += delta_time
+            counts["LEFT"] += delta_time
+            counts["RIGHT"] += delta_time
             if event.type != "NOTE_ON":
                 # ignore all events except NOTE_ON
                 continue
             else:
-                time_to_last_note += delta_time
-                if time_to_last_note > time_threshold:
-                    note_name = GAME_NOTES.get(event.key)
-                    if note_name:
-                        notes.append({
-                            "time": int(current_time * ms_per_tick),
-                            "note": note_name
-                        })
-                        # reset counter
-                        time_to_last_note = 0
+                note = GAME_NOTES.get(event.key)
+                if note and counts[note["hand"]] > time_threshold:
+                    notes.append({
+                        "time": int(current_time * ms_per_tick),
+                        "note": note["note"]
+                    })
+                    # reset counter
+                    counts[note["hand"]] = 0
         return notes
 
 

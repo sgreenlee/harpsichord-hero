@@ -26,8 +26,8 @@
 .filament.B1 { left: 252px; }
 .filament.C1 { left: 352px; }
 .filament.D1 { left: 452px; }
-.filament.E2 { left: 552px; }
-.filament.F2 { left: 652px; }
+.filament.E1 { left: 552px; }
+.filament.F1 { left: 652px; }
 .filament.G2 { left: 752px; }
 .filament.A2 { left: 852px; }
 .filament.B2 { left: 952px; }
@@ -38,8 +38,8 @@
 .note.B1 { left: 202px; }
 .note.C1 { left: 302px; }
 .note.D1 { left: 402px; }
-.note.E2 { left: 502px; }
-.note.F2 { left: 602px; }
+.note.E1 { left: 502px; }
+.note.F1 { left: 602px; }
 .note.G2 { left: 702px; }
 .note.A2 { left: 802px; }
 .note.B2 { left: 902px; }
@@ -49,8 +49,8 @@
 .note.B1::after { content: "D" }
 .note.C1::after { content: "F" }
 .note.D1::after { content: "G" }
-.note.E2::after { content: "H" }
-.note.F2::after { content: "J" }
+.note.E1::after { content: "H" }
+.note.F1::after { content: "J" }
 .note.G2::after { content: "K" }
 .note.A2::after { content: "L" }
 .note.B2::after { content: ";" }

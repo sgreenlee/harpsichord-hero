@@ -1,4 +1,4 @@
-var synth = require("./lib/synth/synth.js");
+// var synth = require("./lib/synth/synth.js");
 
 var maps = require("./lib/keys");
 var KEY_MAPS = maps.KEY_MAPS;
@@ -17,20 +17,16 @@ function onWin () {
 }
 
 function onLose () {
-  Game.stop();
-  Sounds.music.pause();
-  Sounds.boo.play();
-  Modals.lose.open();
+  // Game.stop();
+  // Sounds.music.pause();
+  // Sounds.boo.play();
+  // Modals.lose.open();
 }
 
 function onRestart () {
   Modals.close();
   StarMeter.reset();
-  Game.start();
-  setTimeout(function() {
-    Sounds.music.currentTime = 0;
-    Sounds.music.play();
-  }, 200);
+  Game.load();
 }
 
 Sounds.setMusicEndCallback(onWin);
@@ -42,24 +38,24 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-var KEY_PRESSED = {};
+// var KEY_PRESSED = {};
 
-document.addEventListener("keydown", function(e) {
-  if (KEY_PRESSED[e.keyCode]) return;
-  KEY_PRESSED[e.keyCode] = true;
-  var noteName = KEY_NOTE_MAP[e.keyCode];
-  if (noteName) synth[noteName].play();
-});
-document.addEventListener("keyup", function(e) {
-  KEY_PRESSED[e.keyCode] = false;
-  var noteName = KEY_NOTE_MAP[e.keyCode];
-});
-
-window.playChord = function () {
-  synth["G4"].play();
-  synth["B4"].play();
-  synth["D5"].play();
-  synth["G5"].play();
-  synth["B5"].play();
-  synth["D6"].play();
-};
+// document.addEventListener("keydown", function(e) {
+//   if (KEY_PRESSED[e.keyCode]) return;
+//   KEY_PRESSED[e.keyCode] = true;
+//   var noteName = KEY_NOTE_MAP[e.keyCode];
+//   if (noteName) synth[noteName].play();
+// });
+// document.addEventListener("keyup", function(e) {
+//   KEY_PRESSED[e.keyCode] = false;
+//   var noteName = KEY_NOTE_MAP[e.keyCode];
+// });
+//
+// window.playChord = function () {
+//   synth["G4"].play();
+//   synth["B4"].play();
+//   synth["D5"].play();
+//   synth["G5"].play();
+//   synth["B5"].play();
+//   synth["D6"].play();
+// };

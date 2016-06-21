@@ -17,7 +17,28 @@ var _trash = new LinkedList();
 
 var _noteInterval;
 var oldTime;
+var startingTime;
 
+var NoteStore = new LinkedList();
+
+function getSongNotes() {
+  $.ajax({
+    type: "GET",
+    url: "/assets/json/bach_minuet_g_major.json",
+    dataType: "json",
+    success: function (data) {
+      loadNotes(data.track);
+      start();
+    }
+  });
+}
+
+function loadNotes(notes) {
+  debugger
+  notes.forEach( function (note) {
+    NoteStore.add(new Note(note.note, note.time));
+  });
+}
 
 function deleteNote(node) {
   node.delete();
@@ -32,8 +53,9 @@ function clearNotes() {
 
 function animateNote (node) {
   var note = node.item;
-  var timeDelta = arguments[1];
-  note.y = note.y - timeDelta * NOTE_SPEED;
+  var elapsedTime = arguments[1];
+  var remaining = Math.floor(note.time - elapsedTime);
+  note.y = remaining + 400;
   if (note.y < 300) {
     note.element.addClass("missed");
     deleteNote(node);
@@ -45,12 +67,9 @@ function animateNote (node) {
 
 function animate () {
   if (STOP_ANIMATION) return;
-  var now = (new Date()).getTime();
-  oldTime = oldTime || now;
-  var timeDelta = (now - oldTime) / 660;
-  _notes.forEach(animateNote, timeDelta);
-
-  oldTime = now;
+  var now = performance.now();
+  var elapsedTime = now - startingTime;
+  _notes.forEach(animateNote, elapsedTime);
   requestAnimationFrame(animate);
 }
 
@@ -60,16 +79,22 @@ function stopAnimation () {
 
 function startAnimation () {
   STOP_ANIMATION = false;
+  startingTime = performance.now();
   addNotes();
   animate();
 }
 
 function addNotes () {
   _noteInterval = setInterval(function () {
-    var note = Note.random();
-    _notes.add(note);
-    $noteContainer.append(note.element);
-  }, 930);
+    var elapsedTime = performance.now() - startingTime;
+    NoteStore.while( function (node) { return node.item.time - elapsedTime < 7500; },
+      function (node) {
+        _notes.add(node.item);
+        node.item.generateDOMElement();
+        $noteContainer.append(node.item.element);
+        node.delete();
+    });
+  }, 100);
 }
 
 function playNote (noteName) {
@@ -85,15 +110,23 @@ function scoreNode(node, noteName) {
   }
 }
 
+function load() {
+  getSongNotes();
+}
+
 function start() {
   clearNotes();
+  Sounds.music.play()
   startAnimation();
 }
 
 function stop() {
+  console.log("stopping");
   stopAnimation();
   clearInterval(_noteInterval);
 }
+
+window.stop = stop;
 
 document.addEventListener("keydown", function(e) {
   var noteName = KEY_MAPS[e.keyCode];
@@ -107,6 +140,6 @@ document.addEventListener("keyup", function(e) {
 });
 
 module.exports = {
-  start: start,
+  load: load,
   stop: stop
 };

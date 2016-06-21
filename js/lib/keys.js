@@ -4,8 +4,8 @@ var keyMaps = {
   68: "B1",
   70: "C1",
   71: "D1",
-  72: "E2",
-  74: "F2",
+  72: "E1",
+  74: "F1",
   75: "G2",
   76: "A2",
   186: "B2"
@@ -24,6 +24,6 @@ var keyNoteMapping = {
   186: "B5"
 };
 
-var noteNames = ["g1", "a1", "b1", "c1", "d1", "e2", "f2", "g2", "a2", "b2"];
+var noteNames = ["G1", "A1", "B1", "C1", "D1", "E2", "F2", "G2", "A2", "B2"];
 
 module.exports = { KEY_MAPS: keyMaps, NOTE_NAMES: noteNames, KEY_NOTE_MAP: keyNoteMapping };
