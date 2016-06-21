@@ -24,7 +24,7 @@ var NoteStore = new LinkedList();
 function getSongNotes() {
   $.ajax({
     type: "GET",
-    url: "/assets/json/bach_minuet_g_major.json",
+    url: "https://s3.amazonaws.com/hhero-pro/bach_minuet_g_major.mp3",
     dataType: "json",
     success: function (data) {
       loadNotes(data.track);

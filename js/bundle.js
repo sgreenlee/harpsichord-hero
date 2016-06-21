@@ -46,14 +46,14 @@
 
 	// var synth = require("./lib/synth/synth.js");
 
-	var maps = __webpack_require__(1);
+	var maps = __webpack_require__(5);
 	var KEY_MAPS = maps.KEY_MAPS;
 	var KEY_NOTE_MAP = maps.KEY_NOTE_MAP;
 
-	window.Game = __webpack_require__(2);
-	window.StarMeter = __webpack_require__(5);
-	window.Sounds = __webpack_require__(6);
-	window.Modals = __webpack_require__(7);
+	window.Game = __webpack_require__(6);
+	window.StarMeter = __webpack_require__(9);
+	window.Sounds = __webpack_require__(10);
+	window.Modals = __webpack_require__(11);
 	// require("./lib/midi.js");
 
 	function onWin () {
@@ -108,7 +108,11 @@
 
 
 /***/ },
-/* 1 */
+/* 1 */,
+/* 2 */,
+/* 3 */,
+/* 4 */,
+/* 5 */
 /***/ function(module, exports) {
 
 	var keyMaps = {
@@ -143,14 +147,14 @@
 
 
 /***/ },
-/* 2 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var maps = __webpack_require__(1);
+	var maps = __webpack_require__(5);
 	var KEY_MAPS = maps.KEY_MAPS;
 	var KEY_NOTE_MAP = maps.KEY_NOTE_MAP;
-	var Note = __webpack_require__(3);
-	var LinkedList = __webpack_require__(4);
+	var Note = __webpack_require__(7);
+	var LinkedList = __webpack_require__(8);
 
 	var DISTANCE_TO_TRAVEL = 13000;
 	var SECONDS_TO_TRAVEL = 11;
@@ -172,7 +176,7 @@
 	function getSongNotes() {
 	  $.ajax({
 	    type: "GET",
-	    url: "/assets/json/bach_minuet_g_major.json",
+	    url: "https://s3.amazonaws.com/hhero-pro/bach_minuet_g_major.mp3",
 	    dataType: "json",
 	    success: function (data) {
 	      loadNotes(data.track);
@@ -294,10 +298,10 @@
 
 
 /***/ },
-/* 3 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var NOTE_NAMES = __webpack_require__(1).NOTE_NAMES;
+	var NOTE_NAMES = __webpack_require__(5).NOTE_NAMES;
 	var NUM_NOTES = NOTE_NAMES.length;
 
 	function Note (noteName, time) {
@@ -318,7 +322,7 @@
 
 
 /***/ },
-/* 4 */
+/* 8 */
 /***/ function(module, exports) {
 
 	function Node (item, prev, next) {
@@ -369,7 +373,7 @@
 
 
 /***/ },
-/* 5 */
+/* 9 */
 /***/ function(module, exports) {
 
 	var $starMeter = $('#star-meter');
@@ -427,7 +431,7 @@
 
 
 /***/ },
-/* 6 */
+/* 10 */
 /***/ function(module, exports) {
 
 	var _musicEndCallback = function () {};
@@ -449,7 +453,7 @@
 
 
 /***/ },
-/* 7 */
+/* 11 */
 /***/ function(module, exports) {
 
 	var $modalOverlay = $("#modal-overlay");
