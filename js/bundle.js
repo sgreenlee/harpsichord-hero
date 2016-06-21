@@ -63,10 +63,10 @@
 	}
 
 	function onLose () {
-	  // Game.stop();
-	  // Sounds.music.pause();
-	  // Sounds.boo.play();
-	  // Modals.lose.open();
+	  Game.stop();
+	  Sounds.music.pause();
+	  Sounds.boo.play();
+	  Modals.lose.open();
 	}
 
 	function onRestart () {
