@@ -176,7 +176,7 @@
 	function getSongNotes() {
 	  $.ajax({
 	    type: "GET",
-	    url: "https://s3.amazonaws.com/hhero-pro/bach_minuet_g_major.mp3",
+	    url: "/assets/json/bach_minuet_g_major.json",
 	    dataType: "json",
 	    success: function (data) {
 	      loadNotes(data.track);
@@ -437,7 +437,7 @@
 	var _musicEndCallback = function () {};
 
 	var Sounds = {
-	  music: new Audio("/assets/mp3/bach_minuet_g_major.mp3"),
+	  music: new Audio("https://s3.amazonaws.com/hhero-pro/bach_minuet_g_major.mp3"),
 	  boo: new Audio("https://s3.amazonaws.com/hhero-pro/boo.mp3"),
 	  applause: new Audio("https://s3.amazonaws.com/hhero-pro/applause.mp3"),
 	  setMusicEndCallback: function (callback) {
