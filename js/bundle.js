@@ -186,7 +186,6 @@
 	}
 
 	function loadNotes(notes) {
-	  debugger
 	  notes.forEach( function (note) {
 	    NoteStore.add(new Note(note.note, note.time));
 	  });
