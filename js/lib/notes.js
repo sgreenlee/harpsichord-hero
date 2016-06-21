@@ -19,7 +19,7 @@ var _noteInterval;
 var oldTime;
 var startingTime;
 
-var NoteStore = new LinkedList();
+var NoteStore;
 
 function getSongNotes() {
   $.ajax({
@@ -34,6 +34,7 @@ function getSongNotes() {
 }
 
 function loadNotes(notes) {
+  NoteStore = new LinkedList();
   notes.forEach( function (note) {
     NoteStore.add(new Note(note.note, note.time));
   });

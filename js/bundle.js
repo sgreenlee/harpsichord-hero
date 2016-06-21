@@ -65,6 +65,7 @@
 	function onLose () {
 	  Game.stop();
 	  Sounds.music.pause();
+	  Sounds.music.current_time = 0;
 	  Sounds.boo.play();
 	  Modals.lose.open();
 	}
@@ -171,7 +172,7 @@
 	var oldTime;
 	var startingTime;
 
-	var NoteStore = new LinkedList();
+	var NoteStore;
 
 	function getSongNotes() {
 	  $.ajax({
@@ -186,6 +187,7 @@
 	}
 
 	function loadNotes(notes) {
+	  NoteStore = new LinkedList();
 	  notes.forEach( function (note) {
 	    NoteStore.add(new Note(note.note, note.time));
 	  });
