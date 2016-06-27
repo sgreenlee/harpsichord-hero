@@ -443,6 +443,24 @@ h1 {
 .modal.load p {
   font-size: 30px; }
 
+#loading-screen {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: black;
+  z-index: 10000000;
+  opacity: 1; }
+  #loading-screen h1 {
+    font-family: courier;
+    color: #eee61e;
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%); }
+
 footer {
   position: absolute;
   bottom: 0;

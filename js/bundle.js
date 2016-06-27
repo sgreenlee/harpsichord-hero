@@ -46,14 +46,14 @@
 
 	// var synth = require("./lib/synth/synth.js");
 
-	var maps = __webpack_require__(5);
+	var maps = __webpack_require__(1);
 	var KEY_MAPS = maps.KEY_MAPS;
 	var KEY_NOTE_MAP = maps.KEY_NOTE_MAP;
 
-	window.Game = __webpack_require__(6);
-	window.StarMeter = __webpack_require__(9);
-	window.Sounds = __webpack_require__(10);
-	window.Modals = __webpack_require__(11);
+	window.Game = __webpack_require__(2);
+	window.StarMeter = __webpack_require__(5);
+	window.Sounds = __webpack_require__(6);
+	window.Modals = __webpack_require__(7);
 	// require("./lib/midi.js");
 
 	function onWin () {
@@ -76,44 +76,44 @@
 	  Game.load();
 	}
 
+	var imageLoaded = false;
+	var backgroundImage = new Image();
+	backgroundImage.onload = function () {
+	  document.body.style.backgroundImage = "/img/bg.png";
+	  imageLoaded = true;
+	};
+	backgroundImage.src = "/img/bg.png";
+
+
+	function resourcesLoaded() {
+	  return imageLoaded &&
+	         Sounds.music.readyState === 4 &&
+	         Sounds.boo.readyState === 4 &&
+	         Sounds.applause.readyState === 4;
+	}
+
 	Sounds.setMusicEndCallback(onWin);
 	StarMeter.setLoseCallback(onLose);
 	Modals.setRestartCallback(onRestart);
 
 	document.addEventListener("DOMContentLoaded", function () {
-	  Modals.load.open();
+	  (function waitForResources() {
+	    if( resourcesLoaded()) {
+	      var loadingScreen = document.getElementById("loading-screen");
+	      document.body.removeChild(loadingScreen);
+	      Modals.load.open();
+	    }
+	    else {
+	      setTimeout(function () {
+	        waitForResources();
+	      }, 20);
+	    }
+	  })();
 	});
 
 
-	// var KEY_PRESSED = {};
-
-	// document.addEventListener("keydown", function(e) {
-	//   if (KEY_PRESSED[e.keyCode]) return;
-	//   KEY_PRESSED[e.keyCode] = true;
-	//   var noteName = KEY_NOTE_MAP[e.keyCode];
-	//   if (noteName) synth[noteName].play();
-	// });
-	// document.addEventListener("keyup", function(e) {
-	//   KEY_PRESSED[e.keyCode] = false;
-	//   var noteName = KEY_NOTE_MAP[e.keyCode];
-	// });
-	//
-	// window.playChord = function () {
-	//   synth["G4"].play();
-	//   synth["B4"].play();
-	//   synth["D5"].play();
-	//   synth["G5"].play();
-	//   synth["B5"].play();
-	//   synth["D6"].play();
-	// };
-
-
 /***/ },
-/* 1 */,
-/* 2 */,
-/* 3 */,
-/* 4 */,
-/* 5 */
+/* 1 */
 /***/ function(module, exports) {
 
 	var keyMaps = {
@@ -148,14 +148,14 @@
 
 
 /***/ },
-/* 6 */
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var maps = __webpack_require__(5);
+	var maps = __webpack_require__(1);
 	var KEY_MAPS = maps.KEY_MAPS;
 	var KEY_NOTE_MAP = maps.KEY_NOTE_MAP;
-	var Note = __webpack_require__(7);
-	var LinkedList = __webpack_require__(8);
+	var Note = __webpack_require__(3);
+	var LinkedList = __webpack_require__(4);
 
 	var DISTANCE_TO_TRAVEL = 13000;
 	var SECONDS_TO_TRAVEL = 11;
@@ -299,10 +299,10 @@
 
 
 /***/ },
-/* 7 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var NOTE_NAMES = __webpack_require__(5).NOTE_NAMES;
+	var NOTE_NAMES = __webpack_require__(1).NOTE_NAMES;
 	var NUM_NOTES = NOTE_NAMES.length;
 
 	function Note (noteName, time) {
@@ -323,7 +323,7 @@
 
 
 /***/ },
-/* 8 */
+/* 4 */
 /***/ function(module, exports) {
 
 	function Node (item, prev, next) {
@@ -374,7 +374,7 @@
 
 
 /***/ },
-/* 9 */
+/* 5 */
 /***/ function(module, exports) {
 
 	var $starMeter = $('#star-meter');
@@ -432,7 +432,7 @@
 
 
 /***/ },
-/* 10 */
+/* 6 */
 /***/ function(module, exports) {
 
 	var _musicEndCallback = function () {};
@@ -454,7 +454,7 @@
 
 
 /***/ },
-/* 11 */
+/* 7 */
 /***/ function(module, exports) {
 
 	var $modalOverlay = $("#modal-overlay");
