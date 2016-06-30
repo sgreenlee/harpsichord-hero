@@ -4,11 +4,11 @@ var maps = require("./lib/keys");
 var KEY_MAPS = maps.KEY_MAPS;
 var KEY_NOTE_MAP = maps.KEY_NOTE_MAP;
 
-window.Game = require("./lib/notes");
-window.StarMeter = require("./lib/starMeter");
+window.Game = require("./lib/game");
 window.Sounds = require("./lib/sounds");
+window.StarMeter = require("./lib/starMeter");
+window.NoteRolls = require("./lib/noteRolls");
 window.Modals = require("./lib/modals");
-// require("./lib/midi.js");
 
 function onWin () {
   Game.stop();
@@ -18,45 +18,52 @@ function onWin () {
 
 function onLose () {
   Game.stop();
-  Sounds.music.pause();
-  Sounds.music.currentTime = 0;
-  Sounds.boo.play();
+  Sounds.music.stop();
+  Sounds.boo.setLoop(false);
   Modals.lose.open();
 }
 
-function onRestart () {
+function onRestart (songName) {
   Modals.close();
+  Sounds.setSong(songName);
+  Sounds.setMusicEndCallback(onWin);
+  NoteRolls.setSong(songName);
+
+  Sounds.boo.play();
+
+  Sounds.boo.setLoop(true);
+  Sounds.boo.setVolume(0);
   StarMeter.reset();
   Game.load();
 }
 
-Sounds.setMusicEndCallback(onWin);
+var imageLoaded = false;
+var backgroundImage = new Image();
+backgroundImage.onload = function () {
+  document.body.style.backgroundImage = "/img/bg.png";
+  imageLoaded = true;
+};
+backgroundImage.src = "/img/bg.png";
+
+
+function resourcesLoaded() {
+  return imageLoaded && Sounds.allLoaded();
+}
+
 StarMeter.setLoseCallback(onLose);
 Modals.setRestartCallback(onRestart);
 
 document.addEventListener("DOMContentLoaded", function () {
-  Modals.load.open();
+  (function waitForResources() {
+    if( resourcesLoaded()) {
+      var loadingScreen = document.getElementById("loading-screen");
+      document.body.removeChild(loadingScreen);
+      Modals.load.open();
+    }
+    else {
+      setTimeout(function () {
+        waitForResources();
+      }, 20);
+    }
+  })();
 });
-
-
-// var KEY_PRESSED = {};
-
-// document.addEventListener("keydown", function(e) {
-//   if (KEY_PRESSED[e.keyCode]) return;
-//   KEY_PRESSED[e.keyCode] = true;
-//   var noteName = KEY_NOTE_MAP[e.keyCode];
-//   if (noteName) synth[noteName].play();
-// });
-// document.addEventListener("keyup", function(e) {
-//   KEY_PRESSED[e.keyCode] = false;
-//   var noteName = KEY_NOTE_MAP[e.keyCode];
-// });
-//
-// window.playChord = function () {
-//   synth["G4"].play();
-//   synth["B4"].play();
-//   synth["D5"].play();
-//   synth["G5"].play();
-//   synth["B5"].play();
-//   synth["D6"].play();
-// };

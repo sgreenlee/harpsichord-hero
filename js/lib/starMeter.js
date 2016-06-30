@@ -1,7 +1,7 @@
 var $starMeter = $('#star-meter');
 var $starMeterHP = $('#star-meter-hp');
 
-var _hp = 60;
+var _hp = 80;
 var _loseCallback = function () {};
 
 function _calculateMeterColor () {
@@ -10,14 +10,21 @@ function _calculateMeterColor () {
   return "rgb(" + red +", " + green + ", 41)";
 }
 
+function setBooVolume() {
+   var vol = _hp <= 80 ? (80 - _hp) / 60 : 0;
+   vol = vol >= 1 ? 1 : vol;
+   Sounds.boo.setVolume(vol);
+}
+
 function updateMeter () {
   $starMeterHP.css("height", _hp + "%");
   $starMeterHP.css("background-color", _calculateMeterColor());
+  setBooVolume();
 }
 
 var starMeter = {
   reset: function () {
-    _hp = 60;
+    _hp = 80;
     updateMeter();
   },
 

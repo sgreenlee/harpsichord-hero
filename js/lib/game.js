@@ -21,23 +21,18 @@ var startingTime;
 
 var NoteStore;
 
-function getSongNotes() {
-  $.ajax({
-    type: "GET",
-    url: "assets/json/bach_minuet_g_major.json",
-    dataType: "json",
-    success: function (data) {
-      loadNotes(data.track);
-      start();
-    }
-  });
-}
-
-function loadNotes(notes) {
-  NoteStore = new LinkedList();
-  notes.forEach( function (note) {
-    NoteStore.add(new Note(note.note, note.time));
-  });
+function loadNotes(songName) {
+  var noteRoll = NoteRolls.roll;
+  if (noteRoll.isLoaded()) {
+    NoteStore = new LinkedList();
+    noteRoll.notes.forEach( function (note) {
+      NoteStore.add(new Note(note.note, note.time));
+    });
+    start();
+  }
+  else {
+    setTimeout(loadNotes.bind(this, songName), 20);
+  }
 }
 
 function deleteNote(node) {
@@ -60,6 +55,8 @@ function animateNote (node) {
     note.element.addClass("missed");
     deleteNote(node);
     StarMeter.malus(6);
+    // play a random mistake
+    Sounds.mistakes[Math.floor(Math.random() * Sounds.mistakes.length)].play();
   } else {
     note.element.css("bottom", note.y);
   }
@@ -111,12 +108,12 @@ function scoreNode(node, noteName) {
 }
 
 function load() {
-  getSongNotes();
+  loadNotes("bach_minuet_g_major");
 }
 
 function start() {
   clearNotes();
-  Sounds.music.play()
+  Sounds.music.play();
   startAnimation();
 }
 

@@ -31,7 +31,7 @@ BIT_MASK = ~CONTINUATION_BIT
 class MidiFile:
 
     def __init__(self):
-        self.tempo = 0.002
+        self.tempo = 0.001
         self.tracks = []
 
     def set_header(self, header_chunk):
@@ -53,8 +53,9 @@ class MidiFile:
 
     def parse_track(self):
         notes = []
+        TRANSPOSE = 5
         current_time = self.division * 3 # add 1 bar delay
-        time_threshold = 250
+        time_threshold = self.division / 2
         counts = {"LEFT": time_threshold + 1, "RIGHT": time_threshold + 1}
         events = self.tracks[1].content
         ms_per_tick = 1.0 / (self.division * self.tempo)
@@ -66,7 +67,7 @@ class MidiFile:
                 # ignore all events except NOTE_ON
                 continue
             else:
-                note = GAME_NOTES.get(event.key)
+                note = GAME_NOTES.get(event.key + TRANSPOSE)
                 if note and counts[note["hand"]] > time_threshold:
                     notes.append({
                         "time": int(current_time * ms_per_tick),
