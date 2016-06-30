@@ -21,39 +21,39 @@
 
 }
 
-.filament.G1 { left: 52px; }
-.filament.A1 { left: 152px; }
-.filament.B1 { left: 252px; }
-.filament.C1 { left: 352px; }
-.filament.D1 { left: 452px; }
-.filament.E1 { left: 552px; }
-.filament.F1 { left: 652px; }
-.filament.G2 { left: 752px; }
-.filament.A2 { left: 852px; }
-.filament.B2 { left: 952px; }
+.filament.B1 { left: 52px; }
+.filament.C1 { left: 152px; }
+.filament.D1 { left: 252px; }
+.filament.E1 { left: 352px; }
+.filament.F1 { left: 452px; }
+.filament.G1 { left: 552px; }
+.filament.A1 { left: 652px; }
+.filament.B2 { left: 752px; }
+.filament.C2 { left: 852px; }
+.filament.D2 { left: 952px; }
 
 
-.note.G1 { left: 2px; }
-.note.A1 { left: 102px; }
-.note.B1 { left: 202px; }
-.note.C1 { left: 302px; }
-.note.D1 { left: 402px; }
-.note.E1 { left: 502px; }
-.note.F1 { left: 602px; }
-.note.G2 { left: 702px; }
-.note.A2 { left: 802px; }
-.note.B2 { left: 902px; }
+.note.B1 { left: 2px; }
+.note.C1 { left: 102px; }
+.note.D1 { left: 202px; }
+.note.E1 { left: 302px; }
+.note.F1 { left: 402px; }
+.note.G1 { left: 502px; }
+.note.A1 { left: 602px; }
+.note.B2 { left: 702px; }
+.note.C2 { left: 802px; }
+.note.D2 { left: 902px; }
 
-.note.G1::after { content: "A" }
-.note.A1::after { content: "S" }
-.note.B1::after { content: "D" }
-.note.C1::after { content: "F" }
-.note.D1::after { content: "G" }
-.note.E1::after { content: "H" }
-.note.F1::after { content: "J" }
-.note.G2::after { content: "K" }
-.note.A2::after { content: "L" }
-.note.B2::after { content: ";" }
+.note.B1::after { content: "A" }
+.note.C1::after { content: "S" }
+.note.D1::after { content: "D" }
+.note.E1::after { content: "F" }
+.note.F1::after { content: "G" }
+.note.G1::after { content: "H" }
+.note.A1::after { content: "J" }
+.note.B2::after { content: "K" }
+.note.C2::after { content: "L" }
+.note.D2::after { content: ";" }
 
 .note {
   width: 100px;

@@ -2,12 +2,12 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="css/styles.css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="css/styles-prefixed.css" media="screen" title="no title" charset="utf-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <title></title>
   </head>
   <body>
-    <h1 class="metal">Harpsichord Hero</h1>
+    <h1 class="metal">Bach Star</h1>
 
     </audio>
     <div id="star-meter">
@@ -19,46 +19,6 @@
     <div class="keyboard">
 
       <section class="white-key-container left">
-        <div class="white-key G1">
-          <figure class="front"></figure>
-          <figure class="back"></figure>
-          <figure class="right"></figure>
-          <figure class="left"></figure>
-          <figure class="top"></figure>
-          <figure class="bottom"></figure>
-        </div>
-      </section>
-      <section class="white-key-container right">
-        <div class="white-key B2">
-          <figure class="front"></figure>
-          <figure class="back"></figure>
-          <figure class="right"></figure>
-          <figure class="left"></figure>
-          <figure class="top"></figure>
-          <figure class="bottom"></figure>
-        </div>
-      </section>
-      <section class="white-key-container left">
-        <div class="white-key A1">
-          <figure class="front"></figure>
-          <figure class="back"></figure>
-          <figure class="right"></figure>
-          <figure class="left"></figure>
-          <figure class="top"></figure>
-          <figure class="bottom"></figure>
-        </div>
-      </section>
-      <section class="white-key-container right">
-        <div class="white-key A2">
-          <figure class="front"></figure>
-          <figure class="back"></figure>
-          <figure class="right"></figure>
-          <figure class="left"></figure>
-          <figure class="top"></figure>
-          <figure class="bottom"></figure>
-        </div>
-      </section>
-      <section class="white-key-container left">
         <div class="white-key B1">
           <figure class="front"></figure>
           <figure class="back"></figure>
@@ -69,7 +29,7 @@
         </div>
       </section>
       <section class="white-key-container right">
-        <div class="white-key G2">
+        <div class="white-key D2">
           <figure class="front"></figure>
           <figure class="back"></figure>
           <figure class="right"></figure>
@@ -89,7 +49,7 @@
         </div>
       </section>
       <section class="white-key-container right">
-        <div class="white-key F1 left">
+        <div class="white-key C2">
           <figure class="front"></figure>
           <figure class="back"></figure>
           <figure class="right"></figure>
@@ -109,7 +69,47 @@
         </div>
       </section>
       <section class="white-key-container right">
-        <div class="white-key E1 left">
+        <div class="white-key B2">
+          <figure class="front"></figure>
+          <figure class="back"></figure>
+          <figure class="right"></figure>
+          <figure class="left"></figure>
+          <figure class="top"></figure>
+          <figure class="bottom"></figure>
+        </div>
+      </section>
+      <section class="white-key-container left">
+        <div class="white-key E1">
+          <figure class="front"></figure>
+          <figure class="back"></figure>
+          <figure class="right"></figure>
+          <figure class="left"></figure>
+          <figure class="top"></figure>
+          <figure class="bottom"></figure>
+        </div>
+      </section>
+      <section class="white-key-container right">
+        <div class="white-key A1 left">
+          <figure class="front"></figure>
+          <figure class="back"></figure>
+          <figure class="right"></figure>
+          <figure class="left"></figure>
+          <figure class="top"></figure>
+          <figure class="bottom"></figure>
+        </div>
+      </section>
+      <section class="white-key-container left">
+        <div class="white-key F1">
+          <figure class="front"></figure>
+          <figure class="back"></figure>
+          <figure class="right"></figure>
+          <figure class="left"></figure>
+          <figure class="top"></figure>
+          <figure class="bottom"></figure>
+        </div>
+      </section>
+      <section class="white-key-container right">
+        <div class="white-key G1 left">
           <figure class="front"></figure>
           <figure class="back"></figure>
           <figure class="right"></figure>
@@ -171,7 +171,7 @@
           <figure class="bottom"></figure>
         </div>
       </section>
-      <section class="black-key-container">
+      <!-- <section class="black-key-container">
         <div class="black-key g-sharp2">
           <figure class="front"></figure>
           <figure class="back"></figure>
@@ -180,7 +180,7 @@
           <figure class="top"></figure>
           <figure class="bottom"></figure>
         </div>
-      </section>
+      </section> -->
       <section class="black-key-container">
         <div class="black-key a-sharp2">
           <figure class="front"></figure>
@@ -196,16 +196,16 @@
         <div class="finish-zone">
           <div class="finish-line"></div>
         </div>
-        <div class="filament G1"></div>
-        <div class="filament A1"></div>
         <div class="filament B1"></div>
         <div class="filament C1"></div>
         <div class="filament D1"></div>
         <div class="filament E1"></div>
         <div class="filament F1"></div>
-        <div class="filament G2"></div>
-        <div class="filament A2"></div>
+        <div class="filament G1"></div>
+        <div class="filament A1"></div>
         <div class="filament B2"></div>
+        <div class="filament C2"></div>
+        <div class="filament D2"></div>
 
       </div>
       <div id="note-container">
@@ -227,7 +227,7 @@
 
     <!-- YOU LOSE MODAL -->
     <div class="modal lose modal-group">
-      <h2 class="metal">Sorry, you are <em>not</em> a harpsichord hero</h2>
+      <h2 class="metal">Sorry, you are <em>not</em> a Bach star</h2>
       <p>Don't quit your day job</p>
       <button type="button" class="new-game" name="button">Try Again</button>
     </div>
@@ -235,7 +235,7 @@
 
     <!-- YOU WIN MODAL -->
     <div class="modal win modal-group">
-      <h2 class="metal">Congratulations, you are a harpsichord hero!</h2>
+      <h2 class="metal">Congratulations, you are a Bach star!</h2>
       <p>Well done.</p>
       <button type="button" class="new-game" name="button">Play Again</button>
     </div>
@@ -243,11 +243,21 @@
 
     <!-- LOAD MODAL -->
     <div class="modal load modal-group">
-      <h2 class="metal">Are you a harpsichord hero?</h2>
+      <h2 class="metal">Are you a Bach star?</h2>
       <p>Hit the keys right when they cross the red line, and don't miss too many or you'll be booed off stage.</p>
       <button type="button" class="new-game" name="button">Play Now</button>
     </div>
     <!-- END LOAD MODAL -->
+
+
+    <!-- SONG SELECTION MODAL -->
+    <div class="modal select modal-group">
+      <h2 class="metal">Choose a song</h2>
+      <button type="button" class="song-select" data-song="bach_minuet_g_major" name="button">BWV Anh. 114 Minuet in G Major</button>
+      <button type="button" class="song-select" data-song="bach_invention4_d_minor" name="button">BWV 775 Invention no. 4 in D Minor</button>
+      <button type="button" class="song-select" data-song="bach_goldberg_aria" name="button">BWV 998 Goldberg Variations Aria</button>
+    </div>
+    <!-- END SONG SELECTION MODAL -->
 
     <div id="loading-screen">
         <h1>loading</h1>

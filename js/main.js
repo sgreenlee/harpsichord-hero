@@ -4,11 +4,11 @@ var maps = require("./lib/keys");
 var KEY_MAPS = maps.KEY_MAPS;
 var KEY_NOTE_MAP = maps.KEY_NOTE_MAP;
 
-window.Game = require("./lib/notes");
+window.Game = require("./lib/game");
 window.Sounds = require("./lib/sounds");
 window.StarMeter = require("./lib/starMeter");
+window.NoteRolls = require("./lib/noteRolls");
 window.Modals = require("./lib/modals");
-// require("./lib/midi.js");
 
 function onWin () {
   Game.stop();
@@ -23,9 +23,14 @@ function onLose () {
   Modals.lose.open();
 }
 
-function onRestart () {
+function onRestart (songName) {
   Modals.close();
+  Sounds.setSong(songName);
+  Sounds.setMusicEndCallback(onWin);
+  NoteRolls.setSong(songName);
+
   Sounds.boo.play();
+
   Sounds.boo.setLoop(true);
   Sounds.boo.setVolume(0);
   StarMeter.reset();
@@ -45,7 +50,6 @@ function resourcesLoaded() {
   return imageLoaded && Sounds.allLoaded();
 }
 
-Sounds.setMusicEndCallback(onWin);
 StarMeter.setLoseCallback(onLose);
 Modals.setRestartCallback(onRestart);
 

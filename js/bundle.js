@@ -51,10 +51,10 @@
 	var KEY_NOTE_MAP = maps.KEY_NOTE_MAP;
 
 	window.Game = __webpack_require__(2);
-	window.Sounds = __webpack_require__(6);
-	window.StarMeter = __webpack_require__(5);
-	window.Modals = __webpack_require__(7);
-	// require("./lib/midi.js");
+	window.Sounds = __webpack_require__(5);
+	window.StarMeter = __webpack_require__(6);
+	window.NoteRolls = __webpack_require__(7);
+	window.Modals = __webpack_require__(8);
 
 	function onWin () {
 	  Game.stop();
@@ -69,9 +69,14 @@
 	  Modals.lose.open();
 	}
 
-	function onRestart () {
+	function onRestart (songName) {
 	  Modals.close();
+	  Sounds.setSong(songName);
+	  Sounds.setMusicEndCallback(onWin);
+	  NoteRolls.setSong(songName);
+
 	  Sounds.boo.play();
+
 	  Sounds.boo.setLoop(true);
 	  Sounds.boo.setVolume(0);
 	  StarMeter.reset();
@@ -91,7 +96,6 @@
 	  return imageLoaded && Sounds.allLoaded();
 	}
 
-	Sounds.setMusicEndCallback(onWin);
 	StarMeter.setLoseCallback(onLose);
 	Modals.setRestartCallback(onRestart);
 
@@ -116,16 +120,16 @@
 /***/ function(module, exports) {
 
 	var keyMaps = {
-	  65: "G1",
-	  83: "A1",
-	  68: "B1",
-	  70: "C1",
-	  71: "D1",
-	  72: "E1",
-	  74: "F1",
-	  75: "G2",
-	  76: "A2",
-	  186: "B2"
+	  65: "B1",
+	  83: "C1",
+	  68: "D1",
+	  70: "E1",
+	  71: "F1",
+	  72: "G1",
+	  74: "A1",
+	  75: "B2",
+	  76: "C2",
+	  186: "D2"
 	};
 
 	var keyNoteMapping = {
@@ -173,23 +177,18 @@
 
 	var NoteStore;
 
-	function getSongNotes() {
-	  $.ajax({
-	    type: "GET",
-	    url: "assets/json/bach_minuet_g_major.json",
-	    dataType: "json",
-	    success: function (data) {
-	      loadNotes(data.track);
-	      start();
-	    }
-	  });
-	}
-
-	function loadNotes(notes) {
-	  NoteStore = new LinkedList();
-	  notes.forEach( function (note) {
-	    NoteStore.add(new Note(note.note, note.time));
-	  });
+	function loadNotes(songName) {
+	  var noteRoll = NoteRolls.roll;
+	  if (noteRoll.isLoaded()) {
+	    NoteStore = new LinkedList();
+	    noteRoll.notes.forEach( function (note) {
+	      NoteStore.add(new Note(note.note, note.time));
+	    });
+	    start();
+	  }
+	  else {
+	    setTimeout(loadNotes.bind(this, songName), 20);
+	  }
 	}
 
 	function deleteNote(node) {
@@ -212,6 +211,8 @@
 	    note.element.addClass("missed");
 	    deleteNote(node);
 	    StarMeter.malus(6);
+	    // play a random mistake
+	    Sounds.mistakes[Math.floor(Math.random() * Sounds.mistakes.length)].play();
 	  } else {
 	    note.element.css("bottom", note.y);
 	  }
@@ -263,12 +264,12 @@
 	}
 
 	function load() {
-	  getSongNotes();
+	  loadNotes("bach_minuet_g_major");
 	}
 
 	function start() {
 	  clearNotes();
-	  Sounds.music.play()
+	  Sounds.music.play();
 	  startAnimation();
 	}
 
@@ -376,6 +377,103 @@
 /* 5 */
 /***/ function(module, exports) {
 
+	var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+
+
+	var _musicEndCallback = function () {};
+
+	function _musicEndHandler () {
+	  _musicEndCallback();
+	}
+
+	function MediaSource(sourceUrl) {
+	  this._mediaElement = new Audio(sourceUrl);
+	  var mediaSource = this;
+	  this._mediaElement.onload = function () {
+	    mediaSource._sourceNode = audioCtx.createMediaElementSource(this._mediaElement);
+	    mediaSource._gainNode.connect(audioCtx.destination);
+	  };
+	}
+
+
+	MediaSource.prototype.play = function () {
+	  this._mediaElement.play();
+	};
+
+	MediaSource.prototype.stop = function () {
+	  this._mediaElement.pause();
+	  this._mediaElement.currentTime = 0;
+	};
+
+	MediaSource.prototype.setVolume = function (vol) {
+	  this._mediaElement.volume = vol;
+	};
+
+	MediaSource.prototype.setLoop = function (loop) {
+	  this._mediaElement.loop = loop;
+	};
+
+	MediaSource.prototype.isLoaded = function () {
+	  return this._mediaElement.readyState === 4;
+	};
+
+	MediaSource.prototype.addEventListener = function () {
+	  // delegate event listeners to media element
+	  var argsArray = [].slice.call(arguments);
+	  this._mediaElement.addEventListener.apply(this._mediaElement, argsArray);
+	};
+
+	function Song(sourceUrl) {
+	  this._mediaElement = new Audio(sourceUrl);
+	  var mediaSource = this;
+	  this._mediaElement.onload = function () {
+	    mediaSource._sourceNode = audioCtx.createMediaElementSource(this._mediaElement);
+	    mediaSource._gainNode.connect(audioCtx.destination);
+	  };
+	}
+
+	Song.prototype = Object.create(MediaSource.prototype);
+
+	var boo = new MediaSource("https://s3.amazonaws.com/hhero-pro/boo.mp3");
+	var applause = new MediaSource("https://s3.amazonaws.com/hhero-pro/applause.mp3");
+	var mistake1 = new MediaSource("https://s3.amazonaws.com/hhero-pro/mistake1.mp3");
+	var mistake2 = new MediaSource("https://s3.amazonaws.com/hhero-pro/mistake2.mp3");
+
+	var songs = {
+	  bach_minuet_g_major: new Song("https://s3.amazonaws.com/hhero-pro/bach_minuet_g_major.mp3"),
+	  bach_invention4_d_minor: new Song("https://s3.amazonaws.com/hhero-pro/bach_invention4_dminor.mp3"),
+	  bach_goldberg_aria: new Song("https://s3.amazonaws.com/hhero-pro/bach_goldberg_aria.mp3")
+	};
+
+	var Sounds = {
+	  music: songs["bach_minuet_g_major"],
+	  boo: boo,
+	  applause: applause,
+	  mistakes: [mistake1, mistake2],
+	  setMusicEndCallback: function (callback) {
+	    _musicEndCallback = callback;
+	  },
+	  allLoaded: function () {
+	    return this.music.isLoaded() &&
+	           this.boo.isLoaded() &&
+	           this.applause.isLoaded();
+	  },
+
+	  setSong: function (songName) {
+	    this.music = songs[songName];
+	    this.music.addEventListener("ended", _musicEndHandler);
+	  }
+	};
+
+
+	module.exports = Sounds;
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
 	var $starMeter = $('#star-meter');
 	var $starMeterHP = $('#star-meter-hp');
 
@@ -438,94 +536,74 @@
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
-	var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+	function NoteRoll(url) {
+	  var roll = this;
 
-	var _musicEndCallback = function () {};
+	  this.req = new XMLHttpRequest();
+	  this.req.open("GET", url);
+	  this.req.addEventListener("load", function (e) {
+	    roll.notes = (JSON.parse(this.responseText))["track"];
+	  });
 
-
-
-	function MediaSource(sourceUrl) {
-	  this._mediaElement = new Audio(sourceUrl);
-	  var mediaSource = this;
-	  this._mediaElement.onload = function () {
-	    mediaSource._sourceNode = audioCtx.createMediaElementSource(this._mediaElement);
-	    mediaSource._gainNode.connect(audioCtx.destination);
-	  };
+	  this.req.send();
 	}
 
-	MediaSource.prototype.play = function () {
-	  this._mediaElement.play();
+	NoteRoll.prototype.isLoaded = function () {
+	  return (this.req.readyState === 4);
 	};
 
-	MediaSource.prototype.stop = function () {
-	  this._mediaElement.pause();
-	  this._mediaElement.currentTime = 0;
+	var rolls = {
+	  bach_minuet_g_major: new NoteRoll("assets/json/bach_minuet_g_major.json"),
+	  bach_invention4_d_minor: new NoteRoll("assets/json/bach_invention4_d_minor.json"),
+	  bach_goldberg_aria: new NoteRoll("assets/json/bach_goldberg_aria.json")
 	};
 
-	MediaSource.prototype.setVolume = function (vol) {
-	  this._mediaElement.volume = vol;
-	};
-
-	MediaSource.prototype.setLoop = function (loop) {
-	  this._mediaElement.loop = loop;
-	};
-
-	MediaSource.prototype.isLoaded = function () {
-	  return this._mediaElement.readyState === 4;
-	};
-
-	MediaSource.prototype.addEventListener = function () {
-	  // delegate event listeners to media element
-	  var argsArray = [].slice.call(arguments);
-	  this._mediaElement.addEventListener.apply(this._mediaElement, argsArray);
-	};
-
-	var music = new MediaSource("https://s3.amazonaws.com/hhero-pro/bach_minuet_g_major.mp3");
-	var boo = new MediaSource("https://s3.amazonaws.com/hhero-pro/boo.mp3");
-	var applause = new MediaSource("https://s3.amazonaws.com/hhero-pro/applause.mp3");
-
-	var Sounds = {
-	  music: music,
-	  boo: boo,
-	  applause: applause,
-	  setMusicEndCallback: function (callback) {
-	    _musicEndCallback = callback;
-	  },
-	  allLoaded: function () {
-	    return this.music.isLoaded() && this.boo.isLoaded() && this.applause.isLoaded();
+	noteRolls = {
+	  roll: rolls["bach_minuet_g_major"],
+	  setSong: function(songName) {
+	    this.roll = rolls[songName];
 	  }
 	};
 
-	Sounds.music.addEventListener("ended", function () {
-	  _musicEndCallback();
-	});
-
-	module.exports = Sounds;
+	module.exports = noteRolls;
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	var $modalOverlay = $("#modal-overlay");
 	var $loseModal = $(".modal.lose");
 	var $winModal = $(".modal.win");
 	var $loadModal = $(".modal.load");
+	var $selectModal = $(".modal.select");
 	var $body = $("body");
 
 	var _restartCallback = function () {};
 
 	var newGameButtonList = document.querySelectorAll(".new-game");
+	var songSelectButtonList = document.querySelectorAll(".song-select");
 
 	function restart () {
-	  _restartCallback();
+	  currentModal.close();
+	  selectModal.open();
+	}
+
+
+	function selectSong(e) {
+	  var songName = e.target.attributes["data-song"].value;
+	  _restartCallback(songName);
 	}
 
 	for (var i = 0; i < newGameButtonList.length; i++) {
 	  newGameButtonList[i].addEventListener("click", restart);
+	}
+
+	for (var i = 0; i < songSelectButtonList.length; i++) {
+	  songSelectButtonList[i].addEventListener("click", selectSong);
 	}
 
 	$modalOverlay.detach();
@@ -539,6 +617,9 @@
 
 	$loadModal.detach();
 	$loadModal.css("top", "50%");
+
+	$selectModal.detach();
+	$selectModal.css("top", "50%");
 
 	var currentModal = null;
 
@@ -586,6 +667,18 @@
 	  }
 	};
 
+	var selectModal = {
+	  open: function () {
+	    $body.append($modalOverlay);
+	    $body.append($selectModal);
+	    currentModal = this;
+	  },
+	  close: function () {
+	    $modalOverlay.detach();
+	    $selectModal.detach();
+	  }
+	};
+
 	module.exports = {
 	  setRestartCallback: function (callback) {
 	    _restartCallback = callback;
@@ -594,6 +687,7 @@
 	  lose: loseModal,
 	  win: winModal,
 	  load: loadModal,
+	  select: selectModal,
 	  close: function () {
 	    currentModal.close();
 	  }

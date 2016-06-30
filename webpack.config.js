@@ -1,4 +1,5 @@
 var path = require("path");
+var autoprefixer = require("autoprefixer");
 
 module.exports = {
   context: __dirname,
@@ -9,4 +10,10 @@ module.exports = {
     devtoolModuleFilenameTemplate: '[resourcePath]',
     devtoolFallbackModuleFilenameTemplate: '[resourcePath]?[hash]'
   },
+  module: {
+    loaders: [{
+      test:   /\.css$/,
+      loader: "style-loader!css-loader!postcss-loader"
+  }]},
+    postcss: [ autoprefixer({ browsers: ['last 2 versions'] }) ]
 };

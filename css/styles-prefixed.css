@@ -65,9 +65,12 @@ h1 {
   position: absolute;
   bottom: 80px;
   left: 50%;
-  transform: translateX(-50%);
-  transform-style: preserve-3d;
-  perspective: 1000px; }
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  -webkit-transform-style: preserve-3d;
+          transform-style: preserve-3d;
+  -webkit-perspective: 1000px;
+          perspective: 1000px; }
 
 .white-key-container {
   width: 100px;
@@ -78,9 +81,14 @@ h1 {
   width: 100%;
   height: 100%;
   position: absolute;
-  transform-style: preserve-3d;
-  transform: rotateX(-27deg);
-  transition: transform 0.2s; }
+  -webkit-transform-style: preserve-3d;
+          transform-style: preserve-3d;
+  -webkit-transform: rotateX(-27deg);
+          transform: rotateX(-27deg);
+  -webkit-transition: -webkit-transform 0.2s;
+  transition: -webkit-transform 0.2s;
+  transition: transform 0.2s;
+  transition: transform 0.2s, -webkit-transform 0.2s; }
   .white-key figure {
     margin: 0;
     display: block;
@@ -90,38 +98,45 @@ h1 {
     border: 2px solid black;
     width: 100px;
     height: 50px;
-    transform: rotateY(0deg) translateZ(0px); }
+    -webkit-transform: rotateY(0deg) translateZ(0px);
+            transform: rotateY(0deg) translateZ(0px); }
   .white-key .back {
     width: 100px;
     height: 50px;
-    transform: rotateX(180deg) translateZ(400px); }
+    -webkit-transform: rotateX(180deg) translateZ(400px);
+            transform: rotateX(180deg) translateZ(400px); }
   .white-key .right {
     z-index: 3;
     right: -150px;
     width: 400px;
     height: 50px;
-    transform: rotateY(90deg) translateZ(50px) translateX(200px); }
+    -webkit-transform: rotateY(90deg) translateZ(50px) translateX(200px);
+            transform: rotateY(90deg) translateZ(50px) translateX(200px); }
   .white-key .left {
     z-index: 3;
     left: -150px;
     width: 400px;
     height: 50px;
-    transform: rotateY(-90deg) translateZ(50px) translateX(-200px); }
+    -webkit-transform: rotateY(-90deg) translateZ(50px) translateX(-200px);
+            transform: rotateY(-90deg) translateZ(50px) translateX(-200px); }
   .white-key .top {
     border: 2px solid black;
     z-index: 100;
     top: -175px;
     width: 100px;
     height: 400px;
-    transform: rotateX(90deg) translateZ(25px) translateY(-200px); }
+    -webkit-transform: rotateX(90deg) translateZ(25px) translateY(-200px);
+            transform: rotateX(90deg) translateZ(25px) translateY(-200px); }
   .white-key .bottom {
     bottom: -175px;
     width: 100px;
     height: 400px;
-    transform: rotateX(-90deg) translateZ(25px) translateY(200px); }
+    -webkit-transform: rotateX(-90deg) translateZ(25px) translateY(200px);
+            transform: rotateX(-90deg) translateZ(25px) translateY(200px); }
 
 .white-key.pressed {
-  transform: rotateX(-30deg) translateY(22.5px); }
+  -webkit-transform: rotateX(-30deg) translateY(22.5px);
+          transform: rotateX(-30deg) translateY(22.5px); }
   .white-key.pressed .top, .white-key.pressed .front, .white-key.pressed .left, .white-key.pressed .right {
     background-color: red; }
 
@@ -153,8 +168,10 @@ h1 {
   width: 100%;
   height: 100%;
   position: absolute;
-  transform-style: preserve-3d;
-  transform: rotateX(-27deg); }
+  -webkit-transform-style: preserve-3d;
+          transform-style: preserve-3d;
+  -webkit-transform: rotateX(-27deg);
+          transform: rotateX(-27deg); }
   .black-key figure {
     margin: 0;
     display: block;
@@ -164,25 +181,29 @@ h1 {
     background: black;
     width: 50px;
     height: 30px;
-    transform: rotateY(0deg) translateZ(-150px); }
+    -webkit-transform: rotateY(0deg) translateZ(-150px);
+            transform: rotateY(0deg) translateZ(-150px); }
   .black-key .back {
     width: 50px;
     height: 30px;
-    transform: rotateX(180deg) translateZ(450px); }
+    -webkit-transform: rotateX(180deg) translateZ(450px);
+            transform: rotateX(180deg) translateZ(450px); }
   .black-key .right {
     background: black;
     z-index: 3;
     right: -115px;
     width: 300px;
     height: 30px;
-    transform: rotateY(90deg) translateZ(35px) translateX(300px); }
+    -webkit-transform: rotateY(90deg) translateZ(35px) translateX(300px);
+            transform: rotateY(90deg) translateZ(35px) translateX(300px); }
   .black-key .left {
     background: black;
     z-index: 3;
     left: -115px;
     width: 300px;
     height: 30px;
-    transform: rotateY(-90deg) translateZ(35px) translateX(-300px); }
+    -webkit-transform: rotateY(-90deg) translateZ(35px) translateX(-300px);
+            transform: rotateY(-90deg) translateZ(35px) translateX(-300px); }
   .black-key .top {
     border: 2px solid black;
     z-index: 100;
@@ -190,16 +211,19 @@ h1 {
     top: -175px;
     width: 50px;
     height: 300px;
-    transform: rotateX(90deg) translateZ(-25px) translateY(-300px); }
+    -webkit-transform: rotateX(90deg) translateZ(-25px) translateY(-300px);
+            transform: rotateX(90deg) translateZ(-25px) translateY(-300px); }
   .black-key .bottom {
     z-index: 2;
     bottom: -175px;
     width: 100px;
     height: 400px;
-    transform: rotateX(-90deg) translateZ(25px) translateY(200px); }
+    -webkit-transform: rotateX(-90deg) translateZ(25px) translateY(200px);
+            transform: rotateX(-90deg) translateZ(25px) translateY(200px); }
 
 .black-key.pressed {
-  transform: rotateX(-27deg) translateY(15px); }
+  -webkit-transform: rotateX(-27deg) translateY(15px);
+          transform: rotateX(-27deg) translateY(15px); }
   .black-key.pressed .top, .black-key.pressed .left, .black-key.pressed .right, .black-key.pressed .front {
     background-color: red; }
 
@@ -209,7 +233,8 @@ h1 {
   bottom: 0%;
   height: 14000px;
   width: 100%;
-  transform: translateY(7000px) rotateX(63deg) translateY(-7400px);
+  -webkit-transform: translateY(7000px) rotateX(63deg) translateY(-7400px);
+          transform: translateY(7000px) rotateX(63deg) translateY(-7400px);
   background-color: rgba(56, 50, 41, 0.8); }
   .note-overlay .filament {
     position: absolute;
@@ -321,18 +346,24 @@ h1 {
   border: 5px solid black;
   border-radius: 20px;
   position: absolute;
-  transform: translateZ(60px) rotateX(-73deg);
-  transition: transform .4s; }
+  -webkit-transform: translateZ(60px) rotateX(-73deg);
+          transform: translateZ(60px) rotateX(-73deg);
+  -webkit-transition: -webkit-transform .4s;
+  transition: -webkit-transform .4s;
+  transition: transform .4s;
+  transition: transform .4s, -webkit-transform .4s; }
 
 .note.scored {
   box-shadow: 0px 0px 2px 4px #16d929;
   background-color: #16d929;
-  transform: translateZ(60px) rotateX(-73deg) rotateY(90deg) translateY(-500px); }
+  -webkit-transform: translateZ(60px) rotateX(-73deg) rotateY(90deg) translateY(-500px);
+          transform: translateZ(60px) rotateX(-73deg) rotateY(90deg) translateY(-500px); }
 
 .note.missed {
   box-shadow: 0px 0px 2px 4px #de441c;
   background-color: #de441c;
-  transform: translateZ(60px) rotateX(-73deg) rotateY(90deg) translateY(100px); }
+  -webkit-transform: translateZ(60px) rotateX(-73deg) rotateY(90deg) translateY(100px);
+          transform: translateZ(60px) rotateX(-73deg) rotateY(90deg) translateY(100px); }
 
 .note::before {
   content: "";
@@ -366,8 +397,10 @@ h1 {
   bottom: 0%;
   height: 14000px;
   width: 100%;
-  transform-style: preserve-3d;
-  transform: translateY(7000px) rotateX(63deg) translateY(-7400px);
+  -webkit-transform-style: preserve-3d;
+          transform-style: preserve-3d;
+  -webkit-transform: translateY(7000px) rotateX(63deg) translateY(-7400px);
+          transform: translateY(7000px) rotateX(63deg) translateY(-7400px);
   background-color: rgba(56, 50, 41, 0.1); }
 
 #star-meter {
@@ -409,7 +442,8 @@ h1 {
   height: 500px;
   border-radius: 50px;
   border: 4px solid #eee61e;
-  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
   background-color: #090705;
   opacity: .9;
   color: white; }
@@ -431,6 +465,7 @@ h1 {
     font: inherit;
     padding: 20px;
     font-size: 28px;
+    -webkit-transition: box-shadow .3s;
     transition: box-shadow .3s; }
   .modal button:hover {
     box-shadow: 0px 0px 2px 4px #eee61e;
@@ -458,7 +493,8 @@ h1 {
     padding: 0;
     top: 25%;
     left: 50%;
-    transform: translateX(-50%); }
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%); }
 
 footer {
   position: absolute;
