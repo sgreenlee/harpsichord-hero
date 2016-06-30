@@ -1,4 +1,4 @@
-# Bach Star
+# Bach Star (formerly known as Harpsichord Hero)
 
 ![screenshot](./docs/hhero-screen.png)
 
