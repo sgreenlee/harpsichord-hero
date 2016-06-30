@@ -40,7 +40,7 @@ function onRestart (songName) {
 var imageLoaded = false;
 var backgroundImage = new Image();
 backgroundImage.onload = function () {
-  document.body.style.backgroundImage = "/img/bg.png";
+  document.body.style.backgroundImage = "https://s3.amazonaws.com/hhero-pro/bg.jpg";
   imageLoaded = true;
 };
 backgroundImage.src = "/img/bg.png";
